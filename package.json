@@ -1,0 +1,36 @@
+{
+  "name": "hot-webpack-boilerplate",
+  "version": "1.0.0",
+  "description": "Boilerplate for webpack projects with hot-reload dev server.",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config webpack-config/prod.js",
+    "watch": "webpack --config webpack-config/dev.js --watch",
+    "start": "node server-prod.js",
+    "dev": "node server-dev.js"
+  },
+  "author": "Alexander Schornberg",
+  "license": "MIT",
+  "devDependencies": {
+    "css-loader": "^6.7.1",
+    "css-minimizer-webpack-plugin": "^4.2.2",
+    "express": "^4.18.2",
+    "html-webpack-plugin": "^5.5.0",
+    "mini-css-extract-plugin": "^2.6.1",
+    "postcss-loader": "^7.0.1",
+    "sass": "^1.56.0",
+    "sass-loader": "^13.1.0",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-middleware": "^5.3.3",
+    "webpack-dev-server": "^4.11.1"
+  },
+  "dependencies": {
+    "babel-loader": "^9.1.0",
+    "clean-webpack-plugin": "^4.0.0",
+    "set-random-interval": "^1.1.0",
+    "webpack-merge": "^5.8.0"
+  }
+}

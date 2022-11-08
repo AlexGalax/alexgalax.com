@@ -1,0 +1,72 @@
+@keyframes run-horizontal{
+  0% { background-position: 0; }
+  100% { background-position: -1000px; }
+}
+
+%fx-overlay{
+  position: fixed;
+  z-index: 4;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.screen{
+  max-width: 400px;
+  margin: 0 auto;
+
+  .logo{
+    font-weight: bold;
+  }
+
+  .terminal{
+    font-family: 'VT323', monospace;
+    font-size: 24px;
+    .output{
+      word-break: break-all;
+    }
+  }
+
+  *[class*='scanlines-'] {
+    @extend %fx-overlay;
+    &::after, &::before{
+      bottom: 0;
+      content: " ";
+      display: block;
+      left: 0;
+      pointer-events: none;
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: 2;
+    }
+
+    &.scanlines-horizontal{
+      &::before{
+        background: linear-gradient(hsla(0, 6%, 7%, 0) 50%, rgba(0, 0, 0, .1) 0);
+        background-size: 100% 4px;
+      }
+    }
+    &.scanlines-vertical{
+      &::before{
+        background: linear-gradient(90deg, rgba(255, 0, 0, .01), rgba(0, 255, 0, .01), rgba(0, 0, 255, .01));
+        background-size: 50px 100%;
+
+        animation-name: run-horizontal;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        animation-duration: 30s;
+        transform-style: preserve-3d;
+      }
+    }
+  }
+
+  .vignette{
+    @extend %fx-overlay;
+    box-shadow: inset 0 0 300px black;
+  }
+
+}
+

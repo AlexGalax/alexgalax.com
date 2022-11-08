@@ -1,0 +1,18 @@
+@import "fonts";
+@import "screen";
+
+body{
+    position: relative;
+    margin: 0;
+    padding: 0;
+    min-width: 100vw;
+    min-height: 100vh;
+    background: #464;
+    color: #FFF;
+    filter: blur(1px);
+}
+
+pre{
+    margin: 0;
+}
+
