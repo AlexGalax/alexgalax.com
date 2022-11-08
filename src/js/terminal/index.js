@@ -8,20 +8,46 @@ export class Terminal {
 
     print(text){
         this.container.innerHTML = this.container.innerHTML + text;
+        return this;
     }
 
     async boot(){
+        const today = new Date();
         console.log('booting');
-        await this.type('Starting system', { newLine: true });
-        await this.type('Loading AXGX-OS (TM) 4.20 Release 69');
-        await this.type(' .......................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
-
+        this.print('AG83-OS(TM)    Version 4.20 Release 69')
+            .break()
+            .print('(C) AxGx Corp')
+            .break();
+        await this.wait(1000);
+        this.print('Current date is ' + today.toString()).break();
+        await this.wait(1000);
+        this.print('Loading system controls');
+        await this.type('.......................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
+        this.print('Checking hardware status');
+        await this.type('................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
+        this.print('Memory Test: 65536 bytes');
+        await this.type('...... ', { typeSpeedMin: 10, typeSpeedMax: 500 });
+        this.print('OK').break();
+        await this.wait(1000);
+        this.print('Device #01 5 MiB HDD').break();
+        await this.wait(200);
+        this.print('Device #02 360K 5.25" floppy *speed*').break();
+        await this.wait(1000);
+        this.print('> ').break();
     }
 
     break(){
         console.log('break');
         this.print('<br>');
         return this;
+    }
+
+    wait(timeout){
+        return new Promise(async (resolve) => {
+            setTimeout(function () {
+                resolve();
+            }, timeout);
+        });
     }
 
     async type( text, options = {} ) {
@@ -33,8 +59,6 @@ export class Terminal {
             processChars = true,
             newLine = false
         } = options;
-
-        console.log('type start', text);
 
         let interval;
         await new Promise(async (resolve) => {
