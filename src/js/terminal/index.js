@@ -2,43 +2,42 @@ import setRandomInterval from 'set-random-interval';
 
 export class Terminal {
 
-    constructor(container) {
-        this.container = container || document.querySelector('.terminal');
+    constructor(inputContainer,outputContainer) {
+        // @todo: user input
+
+        this.inputContainer = inputContainer || document.querySelector('.terminal .input');
+        this.outputContainer = outputContainer || document.querySelector('.terminal .output');
+    }
+
+    scrollToEnd(){
+        this.outputContainer.scrollTop = this.outputContainer.scrollHeight;
+        return this;
     }
 
     print(text){
-        this.container.innerHTML = this.container.innerHTML + text;
+        this.outputContainer.innerHTML = this.outputContainer.innerHTML + text;
         return this;
     }
 
     async boot(){
         const today = new Date();
-        console.log('booting');
-        this.print('AG83-OS(TM)    Version 4.20 Release 69')
-            .break()
-            .print('(C) AxGx Corp')
-            .break();
-        await this.wait(1000);
-        this.print('Current date is ' + today.toString()).break();
-        await this.wait(1000);
-        this.print('Loading system controls');
-        await this.type('.......................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
-        this.print('Checking hardware status');
-        await this.type('................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
-        this.print('Memory Test: 65536 bytes');
-        await this.type('...... ', { typeSpeedMin: 10, typeSpeedMax: 500 });
-        this.print('OK').break();
-        await this.wait(1000);
-        this.print('Device #01 5 MiB HDD').break();
-        await this.wait(200);
-        this.print('Device #02 360K 5.25" floppy *speed*').break();
-        await this.wait(1000);
+
+        await this.print('AG83-OS(TM)    Version 4.20 Release 69').break()
+                  .print('(C) MutterBrett Corp').break().wait(1000);
+        await this.print('Current date is ' + today.toLocaleString()).break().wait(1000);
+        await this.print('Loading system controls').type('.......................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
+        await this.print('Checking hardware status').type('................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
+        await this.print('CPU: Blitzz (R) Kern 1337').break().wait(200);
+        await this.print('Speed: 4.77 MHz').break().wait(200);
+        await this.print('Memory Test: 262144 bytes').type('...... ', { typeSpeedMin: 10, typeSpeedMax: 500 });
+        await this.print('OK').break().wait(200);
+        await this.print('Device #01 5 MiB hard disk').break().wait(200);
+        await this.print('Device #02 360 KiB 5.25" floppy *Xspeed*').break().wait(200);
         this.print('> ').break();
     }
 
     break(){
-        console.log('break');
-        this.print('<br>');
+        this.print('<br>').scrollToEnd();
         return this;
     }
 
