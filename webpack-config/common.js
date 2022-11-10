@@ -26,6 +26,9 @@ module.exports = {
             title: 'alexgalax.com',
             template: './src/index.html',
             // @todo: favicon: paths.src + '/images/favicon.png',
+            meta: {
+                viewport: 'width=device-width, initial-scale=1'
+            }
         }),
     ],
 

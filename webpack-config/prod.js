@@ -33,7 +33,11 @@ module.exports = merge(common, {
                     "postcss-loader",
                     "sass-loader",
                 ],
+            },{
+                test: /\.html$/,
+                loader: 'posthtml-loader',
             }
+
         ]
     },
 
