@@ -1,0 +1,82 @@
+%fx-overlay{
+  position: fixed;
+  z-index: 4;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+@keyframes run-horizontal{
+  0% { background-position: 0; }
+  100% { background-position: -1000px; }
+}
+
+@keyframes glitch{
+  2%,64%{
+    transform: translate(2px,0) skew(0deg);
+  }
+  4%,60%{
+    transform: translate(-2px,0) skew(0deg);
+  }
+  62%{
+    transform: translate(0,0) skew(5deg);
+  }
+}
+
+:root{
+  --horizontal-scanlines-size: 4px;
+  --horizontal-scanlines-opacity: 0.1;
+  --vertical-scanlines-size: 50px;
+  --vertical-scanlines-opacity: 0.01;
+  --vertical-scanlines-duration: 30s;
+}
+
+.glitch{
+  animation: glitch 1s linear infinite;
+}
+
+.vignette {
+  @extend %fx-overlay;
+  box-shadow: inset 0 0 300px black;
+}
+
+*[class*='scanlines-'] {
+  @extend %fx-overlay;
+  &::after, &::before{
+    bottom: 0;
+    content: " ";
+    display: block;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 2;
+  }
+
+  &.scanlines-horizontal{
+    &::before{
+      background: linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, var(--horizontal-scanlines-opacity)) 0);
+      background-size: 100% var(--horizontal-scanlines-size);
+    }
+  }
+
+  &.scanlines-vertical{
+    &::before{
+      background: linear-gradient(90deg,
+              rgba(255, 0, 0, var(--vertical-scanlines-opacity)),
+              rgba(0, 255, 0, var(--vertical-scanlines-opacity)),
+              rgba(0, 0, 255, var(--vertical-scanlines-opacity))
+      );
+      background-size: var(--vertical-scanlines-size) 100%;
+
+      animation-name: run-horizontal;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      animation-duration: var(--vertical-scanlines-duration);
+      transform-style: preserve-3d;
+    }
+  }
+}

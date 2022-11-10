@@ -1,0 +1,71 @@
+@keyframes blink{
+  0% {
+    opacity: 0;
+  }
+}
+
+:root{
+  --terminal-line-height: 1.2em;
+  --output-height-lines: 6;
+  --terminal-cursor: "█";
+  --terminal-prompt: ">";
+}
+
+.terminal {
+  position: relative;
+  z-index: 1;
+  max-width: 500px;
+  margin: 0px auto;
+  font-family: 'VT323', monospace;
+  font-size: 24px;
+  line-height: var(--terminal-line-height);
+
+  .header {
+    display: flex;
+    align-items: end;
+    gap: 1em;
+    margin-bottom: 20px;
+    font-size: 16px;
+    line-height: 1.2em;
+    .asciibot {
+      font-family: monospace;
+      font-weight: bold;
+    }
+
+    .logo {
+      font-family: monospace;
+      font-weight: bold;
+    }
+  }
+
+  .output {
+    line-break: anywhere;
+    max-height: calc(var(--output-height-lines) * var(--terminal-line-height));
+    overflow: hidden;
+  }
+
+  .input{
+    input{
+      width: 0px;
+      border: none;
+      padding: 0;
+      margin: 0;
+    }
+    &::after, &::before{
+      visibility: hidden;
+      display: inline;
+    }
+    &::after{
+      animation: blink 1.5s steps(2) infinite;
+      content: var(--terminal-cursor);
+    }
+    &::before{
+      content: var(--terminal-prompt);
+    }
+    &.active{
+      &::after, &::before{
+        visibility: visible;
+      }
+    }
+  }
+}
