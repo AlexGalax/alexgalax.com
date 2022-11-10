@@ -11,7 +11,7 @@ const terminalClass = class Terminal {
         let {
             inputEnabled = false,
             cursor = '█',
-            prompt = '>'
+            prompt = '> '
         } = options;
 
         this.$terminal = $terminal;
@@ -88,14 +88,14 @@ const terminalClass = class Terminal {
         return this;
     }
 
-    processUserInput(){
+    async processUserInput(){
         this.disableInput()
             .print(this.prompt + ' ' + this.inputPrint.innerText)
             .clearInput()
-            .break()
-            .type('haha').then( () => {
+            .break();
+        await this.type('haha').then( () => {
             this.break().enableInput();
-        });
+        })
     }
 
     scrollToEnd(){

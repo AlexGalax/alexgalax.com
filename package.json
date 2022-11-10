@@ -30,8 +30,6 @@
   "dependencies": {
     "babel-loader": "^9.1.0",
     "clean-webpack-plugin": "^4.0.0",
-    "html-loader": "^4.2.0",
-    "posthtml-loader": "^2.0.1",
     "set-random-interval": "^1.1.0",
     "webpack-merge": "^5.8.0"
   }
