@@ -1,12 +1,4 @@
 import setRandomInterval from 'set-random-interval'
-import { Configuration, OpenAIApi } from 'openai'
-import * as dotenv from 'dotenv'
-dotenv.config()
-
-const configuration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
 import './terminal.scss'
 
 // @todo catch up/down and add input history
@@ -111,17 +103,16 @@ const terminalClass = class Terminal {
             .clearInput()
             .break();
 
-        const response = await openai.createCompletion({
-            model: "text-babbage-001",
-            prompt: process.env.OPENAI_BLEX + '\n\n Human: ' + userInput,
-            temperature: 1,
-            max_tokens: 100,
-            top_p: 0.5,
-            frequency_penalty: 0.5,
-            presence_penalty: 0.0,
-        });
-
-console.log(response);
+        // const response = await openai.createCompletion({
+        //     model: "text-babbage-001",
+        //     prompt: process.env.OPENAI_BLEX + '\n\n Human: ' + userInput,
+        //     temperature: 1,
+        //     max_tokens: 100,
+        //     top_p: 0.5,
+        //     frequency_penalty: 0.5,
+        //     presence_penalty: 0.0,
+        // });
+        // console.log(response);
 
         this.type('haha').then( () => {
             this.break().enableInput();
@@ -143,13 +134,13 @@ console.log(response);
 
         await this.print('AG83-OS (TM)    Version 4.20 Release 69').break()
                   .print('(C) DeineMutter Corp').break().wait(1000);
-        // await this.print('Current date is ' + today.toLocaleString()).break().wait(1000);
-        // await this.print('Loading system controls').type('.......................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
-        // await this.print('Checking hardware status').type('................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
-        // await this.print('CPU: X-Blitz (R) Kern 1337').break().wait(200);
-        // await this.print('Speed: 4.77 MHz').break().wait(200);
-        // await this.print('Memory Test: 262144 bytes').type('...... ', { typeSpeedMin: 10, typeSpeedMax: 500 });
-        // await this.print('OK').break().wait(200);
+        await this.print('Current date is ' + today.toLocaleString()).break().wait(1000);
+        await this.print('Loading system controls').type('.......................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
+        await this.print('Checking hardware status').type('................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
+        await this.print('CPU: X-Blitz (R) Kern 1337').break().wait(200);
+        await this.print('Speed: 4.77 MHz').break().wait(200);
+        await this.print('Memory Test: 262144 bytes').type('...... ', { typeSpeedMin: 10, typeSpeedMax: 500 });
+        await this.print('OK').break().wait(200);
         await this.print('Device #01 5 MiB hard disk').break().wait(200);
         await this.print('Device #02 360 KiB 5.25" floppy *Xspeed*').break().wait(200);
     }
