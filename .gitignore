@@ -1,5 +1,6 @@
 upload.sh
 .env
 /.idea
+/sslcert
 /node_modules
 /dist

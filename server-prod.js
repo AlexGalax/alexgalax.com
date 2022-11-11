@@ -1,19 +1,23 @@
 const dotenv = require('dotenv');
 const express = require('express');
-const webpack = require('webpack');
-const webpackDevMiddleware = require('webpack-dev-middleware');
+const https = require('https');
+const fs = require('fs');
 
 dotenv.config();
+
 const app = express();
-const config = require('./webpack-config/prod');
-const compiler = webpack(config);
 
-app.use(
-    webpackDevMiddleware(compiler, {
-        publicPath: config.output.publicPath,
-    })
-);
+const credentials = {
+    key: fs.readFileSync(__dirname + '/sslcert/private.key'),
+    cert: fs.readFileSync(__dirname + '/sslcert/server.crt')
+};
 
-app.listen(process.env.PORT, function () {
-    console.log('prod server running on port ' + process.env.PORT);
-});
+https
+    .createServer(credentials, app)
+    .listen(process.env.PORT, ()=>{
+        console.log('server is running at port ' + process.env.PORT)
+    });
+
+app.get('/', (req,res)=>{
+    res.send("Hello from your express server.")
+})
