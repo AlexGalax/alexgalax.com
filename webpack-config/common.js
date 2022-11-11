@@ -1,4 +1,5 @@
 const path = require('path')
+const dotenv = require('dotenv')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
@@ -29,7 +30,7 @@ module.exports = {
             meta: {
                 viewport: 'width=device-width, initial-scale=1'
             }
-        }),
+        })
     ],
 
     module: {

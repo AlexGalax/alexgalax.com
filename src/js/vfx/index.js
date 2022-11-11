@@ -60,7 +60,7 @@ export class Shake {
     {
         this.el.style.transform = 'translate(' + getRandomOffsetValue(this.maxOffsetX) + 'px, ' + getRandomOffsetValue(this.maxOffsetY) + 'px)';
     };
-};
+}
 
 export class Glitch {
     constructor(el, options = {})

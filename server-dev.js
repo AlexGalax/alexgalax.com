@@ -1,8 +1,9 @@
 const path = require('path');
+const dotenv = require('dotenv');
 const webpack = require('webpack');
 const webpackDevServer = require('webpack-dev-server');
 
-const port = 8080;
+dotenv.config();
 const config = require('./webpack-config/dev');
 
 // add hot reload plugin & entry points
@@ -19,12 +20,12 @@ const server = new webpackDevServer(
         static: path.join(__dirname, 'dist'),
         hot: false,
         client: false,
-        port: port
+        port: process.env.PORT
     },
     compiler
 );
 
 (async () => {
     await server.start();
-    console.log('dev server is running on port ' + port);
+    console.log('dev server is running on port ' + process.env.PORT);
 })();

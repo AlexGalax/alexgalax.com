@@ -1,8 +1,17 @@
 import setRandomInterval from 'set-random-interval'
+import { Configuration, OpenAIApi } from 'openai'
+import * as dotenv from 'dotenv'
+dotenv.config()
+
+const configuration = new Configuration({
+    apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
 import './terminal.scss'
 
 // @todo catch up/down and add input history
 // @todo (catch left/right and move cursor?)
+// @todo mobile input - how?
 
 const terminalClass = class Terminal {
 
@@ -27,6 +36,10 @@ const terminalClass = class Terminal {
             '\\    \\_\\  \\/ __ \\|  |__/ __ \\_>    <\n' +
             ' \\______  (____  /____(____  /__/\\_ \\\n' +
             '        \\/     \\/          \\/      \\/';
+
+        this.openai = new OpenAIApi(new Configuration({
+            apiKey: process.env.OPENAI_API_KEY,
+        }));
 
         const r = document.querySelector(':root')
         r.style.setProperty('--terminal-cursor', '\'' + cursor + '\'');
@@ -54,16 +67,7 @@ const terminalClass = class Terminal {
         this.inputPrint = document.createElement('span');
         this.$input.append(this.inputPrint);
 
-        // type input value into div
-        window.addEventListener('keyup', (event) => {
-            if(this.isInputActive){
-                if(event.keyCode === 13){
-                    this.processUserInput();
-                }else if(this.isPrintable(event.keyCode)){
-                    this.inputPrint.innerText = this.inputPrint.innerText + event.key;
-                }
-            }
-        });
+        window.addEventListener('keyup', this.processUserKeyUp.bind(this));
 
         if(inputEnabled)
             this.enableInput();
@@ -88,12 +92,38 @@ const terminalClass = class Terminal {
         return this;
     }
 
-    async processUserInput(){
+    processUserKeyUp(event){
+        if(this.isInputActive){
+            if(event.keyCode === 13){
+                this.processUserPrompt();
+            }else if(this.isPrintable(event.keyCode)){
+                this.inputPrint.innerText = this.inputPrint.innerText + event.key;
+            }
+        }
+    }
+
+    async processUserPrompt(){
+        const userInput = this.prompt;
+
+        // @todo add history
         this.disableInput()
             .print(this.prompt + ' ' + this.inputPrint.innerText)
             .clearInput()
             .break();
-        await this.type('haha').then( () => {
+
+        const response = await openai.createCompletion({
+            model: "text-babbage-001",
+            prompt: process.env.OPENAI_BLEX + '\n\n Human: ' + userInput,
+            temperature: 1,
+            max_tokens: 100,
+            top_p: 0.5,
+            frequency_penalty: 0.5,
+            presence_penalty: 0.0,
+        });
+
+console.log(response);
+
+        this.type('haha').then( () => {
             this.break().enableInput();
         })
     }
@@ -113,13 +143,13 @@ const terminalClass = class Terminal {
 
         await this.print('AG83-OS (TM)    Version 4.20 Release 69').break()
                   .print('(C) DeineMutter Corp').break().wait(1000);
-        await this.print('Current date is ' + today.toLocaleString()).break().wait(1000);
-        await this.print('Loading system controls').type('.......................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
-        await this.print('Checking hardware status').type('................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
-        await this.print('CPU: X-Blitz (R) Kern 1337').break().wait(200);
-        await this.print('Speed: 4.77 MHz').break().wait(200);
-        await this.print('Memory Test: 262144 bytes').type('...... ', { typeSpeedMin: 10, typeSpeedMax: 500 });
-        await this.print('OK').break().wait(200);
+        // await this.print('Current date is ' + today.toLocaleString()).break().wait(1000);
+        // await this.print('Loading system controls').type('.......................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
+        // await this.print('Checking hardware status').type('................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
+        // await this.print('CPU: X-Blitz (R) Kern 1337').break().wait(200);
+        // await this.print('Speed: 4.77 MHz').break().wait(200);
+        // await this.print('Memory Test: 262144 bytes').type('...... ', { typeSpeedMin: 10, typeSpeedMax: 500 });
+        // await this.print('OK').break().wait(200);
         await this.print('Device #01 5 MiB hard disk').break().wait(200);
         await this.print('Device #02 360 KiB 5.25" floppy *Xspeed*').break().wait(200);
     }

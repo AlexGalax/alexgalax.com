@@ -23,6 +23,7 @@ function onload() {
 
     // and boot
     terminal.boot().then(() => {
+        console.log('enable input');
         terminal.enableInput();
     });
 

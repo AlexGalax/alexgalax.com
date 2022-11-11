@@ -1,3 +1,5 @@
+upload.sh
+.env
 /.idea
 /node_modules
 /dist
