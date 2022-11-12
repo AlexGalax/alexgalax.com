@@ -17,15 +17,17 @@
   max-width: 500px;
   margin: 0px auto;
   font-family: 'VT323', monospace;
-  font-size: 24px;
+  font-size: 20px;
   line-height: var(--terminal-line-height);
 
   .header {
+    width: 100%;
+    overflow: hidden;
     display: flex;
     align-items: end;
-    gap: 1em;
+    gap: .5em;
     margin-bottom: 20px;
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1.2em;
     .asciibot {
       font-family: monospace;
@@ -35,21 +37,27 @@
     .logo {
       font-family: monospace;
       font-weight: bold;
+      font-size: 11px;
     }
   }
 
   .output {
+    padding: 0 20px;
     line-break: anywhere;
     max-height: calc(var(--output-height-lines) * var(--terminal-line-height));
     overflow: hidden;
   }
 
   .input{
+    padding: 0 20px;
     input{
-      width: 0px;
+      position: absolute;
+      display: block;
+      //width: 0px;
       border: none;
       padding: 0;
       margin: 0;
+      margin-left: -9999px;
     }
     &::after, &::before{
       visibility: hidden;

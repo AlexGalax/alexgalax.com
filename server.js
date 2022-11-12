@@ -1,0 +1,14 @@
+const dotenv = require('dotenv');
+const express = require('express');
+
+dotenv.config();
+
+const app = express();
+
+app.use('/api/bot', require('./controller/api/bot'));
+
+app.listen(process.env.PORT_PROD, ()=>{
+    console.log('Production server is running at port ' + process.env.PORT_PROD)
+});
+
+exports.app = app;

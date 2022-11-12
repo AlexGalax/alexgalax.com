@@ -1,5 +1,8 @@
+const webpack = require('webpack');
 const { merge } = require('webpack-merge')
 const common = require('./common')
+const dotenv = require('dotenv');
+dotenv.config();
 
 module.exports = merge(common, {
 
@@ -40,5 +43,12 @@ module.exports = merge(common, {
     watchOptions: {
         poll: true,
         ignored: /node_modules/,
-    }
+    },
+
+    plugins: [
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': '"dev"',
+            'process.env.APP_URL': '"http://localhost:' + process.env.PORT_DEV + '"',
+        })
+    ]
 })

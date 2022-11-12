@@ -13,19 +13,27 @@ config.entry.push(
 );
 config.plugins.push(new webpack.HotModuleReplacementPlugin());
 
+// configure webpack
 const compiler = webpack(config);
-
 const server = new webpackDevServer(
     {
         static: path.join(__dirname, 'dist'),
         hot: false,
         client: false,
-        port: process.env.PORT
+        port: process.env.PORT_DEV,
+        proxy: {
+            "/api": "http://localhost:3000"
+        }
+
     },
     compiler
 );
 
+// run server
 (async () => {
     await server.start();
-    console.log('dev server is running on port ' + process.env.PORT);
+    console.log('Dev server is running on port ' + process.env.PORT_DEV);
 })();
+
+// run prod server for api routes
+const { app } = require('./server');

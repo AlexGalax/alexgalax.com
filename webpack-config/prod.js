@@ -1,8 +1,9 @@
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
-const { merge } = require('webpack-merge')
-const common = require('./common')
 const path = require("path");
+const webpack = require('webpack');
+const { merge } = require('webpack-merge');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const common = require('./common');
 
 module.exports = merge(common, {
 
@@ -41,6 +42,9 @@ module.exports = merge(common, {
         new MiniCssExtractPlugin({
             filename: 'styles/[name].[contenthash].css',
             chunkFilename: '[id].css',
+        }),
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': '"prod"',
         })
     ],
 

@@ -1,14 +1,9 @@
-const dotenv = require('dotenv');
+const path = require('path');
 const express = require('express');
+const { app } = require('./server');
 
-dotenv.config();
+app.use(express.static(path.join(__dirname, 'dist')));
 
-const app = express();
-
-app.listen(process.env.PORT, ()=>{
-   console.log('server is running at port ' + process.env.PORT)
+app.get('/', (req,res)=>{
+   res.sendFile(__dirname + '/dist/index.html');
 });
-
-app.get('/', (req,response)=>{
-    response.sendFile((__dirname) + '/dist/index.html');
-})

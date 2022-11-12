@@ -1,19 +1,21 @@
 import './scss/base.scss';
-import Terminal from "./js/terminal";
+import { Terminal } from "./js/terminal";
 import { Asciibots } from "./js/asciibots";
-import {Shake, ChromaticAberration, Glitch, HorizontalScanlines} from './js/vfx';
+import { Shake, ChromaticAberration, Glitch, HorizontalScanlines, VerticalScanlines, Vignette } from './js/vfx';
 import Starfield from "./js/starfield";
 
 function onload() {
 
     const $s = document.querySelector('.screen');
     const $t = document.querySelector('.terminal');
-    const $i = $t.querySelector('.input');
-    const $o = $t.querySelector('.output');
 
+    // add effects to screen
+    new Starfield($s);
     new HorizontalScanlines($s);
+    new VerticalScanlines($s);
+    new Vignette($s, {size: '300px', opacity: 1});
 
-    new Starfield(document.querySelector('canvas.starfield'));
+    // add effects to terminal text
     new ChromaticAberration($t);
     new Shake($t);
     new Glitch($t);
@@ -26,7 +28,6 @@ function onload() {
         console.log('enable input');
         terminal.enableInput();
     });
-
 
     // add asciibot to terminal header
     document.querySelector('.header .asciibot').innerHTML = Asciibots.bot()+'\n\n';

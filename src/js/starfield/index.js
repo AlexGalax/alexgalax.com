@@ -1,7 +1,10 @@
 export default class Starfield {
 
-    constructor(canvas) {
-        this.canvas = canvas;
+    constructor($screen) {
+        this.canvas = document.createElement('canvas');
+        this.canvas.classList.add('starfield');
+        $screen.prepend(this.canvas);
+
         this.canvasContext = this.canvas.getContext("2d");
         this.stars = this.makeStars(1000);
         this.prevTime = 0;

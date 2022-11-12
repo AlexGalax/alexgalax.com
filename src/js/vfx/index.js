@@ -1,6 +1,11 @@
 import './vfx.scss';
 import setRandomInterval from "set-random-interval";
 
+/**
+ * gets a random integer between -maxValue and +maxValue
+ * @param maxValue
+ * @returns {number}
+ */
 function getRandomOffsetValue(maxValue) {
     let neg = Math.random() < 0.5;
     return Math.floor(Math.random() * maxValue * (neg ? -1 : 1));
@@ -13,21 +18,27 @@ export class ChromaticAberration {
         this.el = el;
 
         let {
-            interval = 200,
+            intervalMin = 100,
+            intervalMax = 300,
             maxOffsetX = 3,
             maxOffsetY = 3
         } = options;
 
-        this.interval = interval;
+        this.intervalMin = intervalMin;
+        this.intervalMax = intervalMax;
         this.maxOffsetX = maxOffsetX;
         this.maxOffsetY = maxOffsetY;
 
-        this.el.style.transition = 'text-shadow ' + interval + 'ms ease';
+        // @todo:
+        // fork https://github.com/jabacchetta/set-random-interval
+        // pass random interval to callback function
+        this.el.style.transition = 'text-shadow ' + this.intervalMin + 'ms ease';
 
-        setInterval(this.setProperties.bind(this), this.interval);
+        setRandomInterval(this.setProperties.bind(this), this.intervalMin, this.intervalMax);
     };
 
     setProperties(){
+
         this.el.style.textShadow =
               getRandomOffsetValue(this.maxOffsetX) + "px " + getRandomOffsetValue(this.maxOffsetY) + "px 1px #f004, "
             + getRandomOffsetValue(this.maxOffsetX) + "px " + getRandomOffsetValue(this.maxOffsetY) + "px 1px #0f04, "
@@ -89,6 +100,26 @@ export class Glitch {
     }
 }
 
+export class Vignette {
+    constructor(el, options = {}) {
+
+        this.el = el;
+
+        let {
+            size = '300px',
+            opacity = '1'
+        } = options;
+
+        const vignetteEl = document.createElement('div');
+        vignetteEl.classList.add('vignette');
+        this.el.append(vignetteEl);
+
+        const r = document.querySelector(':root')
+        r.style.setProperty('--vignette-size', size);
+        r.style.setProperty('--vignette-opacity', opacity);
+    }
+}
+
 export class HorizontalScanlines {
     constructor(el, options = {}) {
 
@@ -125,8 +156,8 @@ export class VerticalScanlines {
         this.el.append(scanlineEl);
 
         const r = document.querySelector(':root')
-        r.style.setProperty('--horizontal-scanlines-size', size);
-        r.style.setProperty('--horizontal-scanlines-opacity', opacity);
-        r.style.setProperty('--horizontal-scanlines-duration', duration);
+        r.style.setProperty('--vertical-scanlines-size', size);
+        r.style.setProperty('--vertical-scanlines-opacity', opacity);
+        r.style.setProperty('--vertical-scanlines-duration', duration);
     }
 }

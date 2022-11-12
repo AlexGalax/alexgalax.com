@@ -1,6 +1,7 @@
-const path = require('path')
-const dotenv = require('dotenv')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const fs = require("fs");
+const webpack = require('webpack');
 
 module.exports = {
 
@@ -30,6 +31,10 @@ module.exports = {
             meta: {
                 viewport: 'width=device-width, initial-scale=1'
             }
+        }),
+        new webpack.DefinePlugin({
+            'process.env': JSON.stringify(process.env),
+            'app.config.logo': '`' + (fs.readFileSync(path.resolve(__dirname, '../src/assets/logo.txt'), 'utf-8')).replace(/\\/g, '\\\\') + '`',
         })
     ],
 
