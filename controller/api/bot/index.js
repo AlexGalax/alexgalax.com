@@ -28,7 +28,7 @@ router.get('/getAnswer', async function(req, res) {
     let data = {}
 
     if(response.data.choices.length > 0){
-        console.log('answer:', response.data.choices[0].text);
+        console.log('first choice:', response.data.choices[0]);
 
         // @todo: fix response parsing
         const text = response.data.choices[0].text.match(/^\s*Me ?(\((.*?)\))?:\s*(.*)$/i);

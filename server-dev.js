@@ -24,7 +24,6 @@ const server = new webpackDevServer(
         proxy: {
             "/api": "http://localhost:3000"
         }
-
     },
     compiler
 );
@@ -36,4 +35,5 @@ const server = new webpackDevServer(
 })();
 
 // run prod server for api routes
+// @todo: watch /controller/**/* for hot reload
 const { app } = require('./server');

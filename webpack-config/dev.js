@@ -47,7 +47,6 @@ module.exports = merge(common, {
 
     plugins: [
         new webpack.DefinePlugin({
-            'process.env.NODE_ENV': '"dev"',
             'process.env.APP_URL': '"http://localhost:' + process.env.PORT_DEV + '"',
         })
     ]
