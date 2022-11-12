@@ -3,6 +3,7 @@ import uniqid from 'uniqid';
 export class BotApi {
 
     constructor() {
+        // @todo: save uniqid in cookie
         this.userId = uniqid();
     }
 

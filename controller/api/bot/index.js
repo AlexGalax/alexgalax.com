@@ -1,6 +1,6 @@
 'use strict'
 
-const express = require('express');
+const express = require("express");
 const { Configuration, OpenAIApi } = require("openai");
 const fs = require("fs");
 const path = require("path");
@@ -9,11 +9,12 @@ const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
-const aiTraining = fs.readFileSync(path.resolve(__dirname, 'ai_training.txt'), 'utf-8');
+const aiTraining = fs.readFileSync(path.resolve(__dirname, 'ai_bot_description.txt'), 'utf-8');
 const router = express.Router();
 
 router.get('/getAnswer', async function(req, res) {
 
+    // @todo: options as env vars
     const response = await openai.createCompletion({
         model: process.env.OPENAI_MODEL,
         prompt: aiTraining + '\n\nHuman: ' + req.query.prompt,
@@ -29,6 +30,7 @@ router.get('/getAnswer', async function(req, res) {
     if(response.data.choices.length > 0){
         console.log('answer:', response.data.choices[0].text);
 
+        // @todo: fix response parsing
         const text = response.data.choices[0].text.match(/^\s*Me ?(\((.*?)\))?:\s*(.*)$/i);
         if(text){
             data = {
