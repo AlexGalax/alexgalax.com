@@ -8,7 +8,8 @@ body{
     padding: 0;
     min-width: 100vw;
     min-height: 100vh;
-    background: #464;
+    max-width: 100vw;
+    max-height: 100vh;
     color: #FFF;
     filter: blur(.75px);
 }

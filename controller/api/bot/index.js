@@ -4,6 +4,8 @@ const express = require("express");
 const { Configuration, OpenAIApi } = require("openai");
 const fs = require("fs");
 const path = require("path");
+const {app} = require("../../../server");
+const cors = require("cors");
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
@@ -18,9 +20,9 @@ router.get('/getAnswer', async function(req, res) {
     const response = await openai.createCompletion({
         model: process.env.OPENAI_MODEL,
         prompt: aiTraining + '\n\nHuman: ' + req.query.prompt,
-        temperature: 0.5,
-        max_tokens: 60,
-        top_p: 0.3,
+        temperature: 1,
+        max_tokens: 100,
+        top_p: 1,
         frequency_penalty: 0.5,
         presence_penalty: 0.0,
     });

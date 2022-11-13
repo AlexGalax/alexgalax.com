@@ -81,12 +81,14 @@ export class Glitch {
         let {
             duration = 1000,
             minDelay = 5000,
-            maxDelay = 10000
+            maxDelay = 10000,
+            className = 'glitch'
         } = options;
 
         this.duration = duration;
         this.minDelay = minDelay;
         this.maxDelay = maxDelay;
+        this.className = className;
 
         setRandomInterval(this.toggleClass.bind(this), this.minDelay, this.maxDelay);
     };

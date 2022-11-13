@@ -2,6 +2,7 @@ const path = require('path');
 const dotenv = require('dotenv');
 const webpack = require('webpack');
 const webpackDevServer = require('webpack-dev-server');
+const cors = require('cors');
 
 dotenv.config();
 const config = require('./webpack-config/dev');
@@ -37,3 +38,5 @@ const server = new webpackDevServer(
 // run prod server for api routes
 // @todo: watch /controller/**/* for hot reload
 const { app } = require('./server');
+
+console.log(app);

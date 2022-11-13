@@ -120,6 +120,7 @@ export class Terminal {
         console.log(answer);
         const printAnswer = answer.text || 'Sorry, I was busy right now.';
 
+        // @todo await + asciibot moods
         this.type(printAnswer).then( () => {
             this.break().enableInput();
         })
@@ -140,15 +141,15 @@ export class Terminal {
 
         await this.print('AG83-OS (TM)    Version 4.20 Release 69').break()
                   .print('(C) DeineMutter Corp').break().wait(1000);
-        // await this.print('Current date is ' + today.toLocaleString()).break().wait(1000);
-        // await this.print('Loading system controls').type('.......................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
-        // await this.print('Checking hardware status').type('................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
-        // await this.print('CPU: X-Blitz (R) Kern 1337').break().wait(200);
-        // await this.print('Speed: 4.77 MHz').break().wait(200);
-        // await this.print('Memory Test: 262144 bytes').type('...... ', { typeSpeedMin: 10, typeSpeedMax: 500 });
-        // await this.print('OK').break().wait(200);
-        // await this.print('Device #01 5 MiB hard disk').break().wait(200);
-        // await this.print('Device #02 360 KiB 5.25" floppy *Xspeed*').break().wait(200);
+        await this.print('Current date is ' + today.toLocaleString()).break().wait(1000);
+        await this.print('Loading system controls').type('.......................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
+        await this.print('Checking hardware status').type('................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
+        await this.print('CPU: X-Blitz (R) Kern 1337').break().wait(200);
+        await this.print('Speed: 4.77 MHz').break().wait(200);
+        await this.print('Memory Test: 262144 bytes').type('...... ', { typeSpeedMin: 10, typeSpeedMax: 500 });
+        await this.print('OK').break().wait(200);
+        await this.print('Device #01 5 MiB hard disk').break().wait(200);
+        await this.print('Device #02 360 KiB 5.25" floppy *Xspeed*').break().wait(200);
     }
 
     break(){
