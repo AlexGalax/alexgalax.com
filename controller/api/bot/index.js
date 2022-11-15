@@ -3,7 +3,8 @@
 const fs = require("fs");
 const path = require("path");
 const express = require("express");
-const { Configuration, OpenAIApi } = require("openai");
+const {Configuration, OpenAIApi} = require("openai");
+const {mysqlAddConversation} = require("../../../utils/mysql");
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
@@ -74,14 +75,28 @@ router.get('/getAnswer', async function(req, res) {
     let data = {};
     if(response.data.choices.length > 0){
         data = parseAnswer(response.data.choices[0].text);
-        // @todo: save conversation in file/db
-        // @todo: check if user chatted before (t = 12 hours?). If yes, create a summary, replace for chat and append to training data
     }
+
+    mysqlAddConversation(
+        req.query.userId,
+        req.query.prompt,
+        JSON.stringify(data),
+        data.text !== undefined ? 1 : 0,
+        JSON.stringify(response.data.choices[0].text)
+    );
+
     console.log('data', data);
     res.json(data);
 });
 
 router.get('/getGreeting', async function(req, res) {
+
+    // @todo:
+    // select last record and last record with state 2
+    // if not same record, select all state 1 records until the latest state 2 record
+    // create a summary of the conversation
+    // add into db
+    // add as prompt for greeting
 
     const response = await openai.createCompletion({
         ...openaiRequestConfig,
@@ -96,9 +111,6 @@ router.get('/getGreeting', async function(req, res) {
     if(response.data.choices.length > 0){
         console.log('choices: ', response.data.choices);
         data = parseAnswer(response.data.choices[0].text);
-
-        // @todo: save conversation in file/db
-        // @todo: check if user chatted before (t = 12 hours?). If yes, create a summary, replace for chat and append to training data
     }
 
     res.json(data);

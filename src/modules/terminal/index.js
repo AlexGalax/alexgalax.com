@@ -17,7 +17,6 @@ export class Terminal {
 
     constructor($terminal, options = {}) {
 
-        // @todo: set timestamp in cookie. If t < x, skip boot process.
         if(!Cookies.get('lastVisit')){
             this.updateCookie();
         }
