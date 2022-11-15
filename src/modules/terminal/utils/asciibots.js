@@ -2,8 +2,25 @@
  **  https://walsh9.github.io/asciibots
  **  Copyright (c) 2014 Matthew Walsh; Licensed under MIT license. */
 
-export const Asciibots = (function() {
-    const robots = {
+export class AsciiBot {
+
+    botEmotes = {
+        "neutral": "07",
+        "thinking": "9a",
+        "laughing": "6b",
+        "smiling": "78",
+        "serious": "58",
+        "stoic": "58",
+        "insecure": "a0",
+        "panicking": "34",
+        "asking": "13",
+        "confused": "02",
+        "sad": "be",
+        "annoyed": "af",
+        "mad": "0f"
+    }
+
+    robots = {
         "templates": {
             "0": "     ___T_     \n    | o o |    \n    |__-__|    \n    /| []|\\    \n  ()/|___|\\()  \n     |_|_|     \n     /_|_\\     ",
             "1": "    \\.===./    \n    | b d |    \n     \\_=_/     \n  o==|ooo|==o  \n     |___|     \n    .'._.'.    \n    |_| |_|    ",
@@ -26,24 +43,24 @@ export const Asciibots = (function() {
             "eyes": {
                 "0": "o o",
                 "1": "p q",
-                "2": "q p",
-                "3": "d b",
-                "4": "b d",
+                "2": "~ ~",
+                "3": "(?)",
+                "4": "x x",
                 "5": "ooo",
                 "6": "[o]",
-                "7": "9 9",
-                "8": "6=6",
+                "7": "^ ^",
+                "8": ". .",
                 "9": "u u",
-                "a": "n n",
-                "b": "q q",
-                "c": "d d",
+                "a": "...",
+                "b": "_ _",
+                "c": "---",
                 "d": "- -",
-                "e": "0 0",
-                "f": "O O"
+                "e": "´ `",
+                "f": "` ´",
             },
             "mouths": {
-                "0": "-",
-                "1": "=",
+                "0": "—",
+                "1": ".",
                 "2": "o",
                 "3": "O",
                 "4": "0",
@@ -51,8 +68,8 @@ export const Asciibots = (function() {
                 "6": "u",
                 "7": "v",
                 "8": "n",
-                "9": "r",
-                "a": "`",
+                "9": "_",
+                "a": "~",
                 "b": "^",
                 "c": "A",
                 "d": "@",
@@ -60,10 +77,11 @@ export const Asciibots = (function() {
                 "f": "E"
             }
         }
-    };
-    const idHelper = {
+    }
+
+    idHelper = {
         isValid: function(id, minlength, maxlength, radix) {
-            var range = "",
+            let range = "",
                 idPattern;
             if (radix < 2 || radix > 36) {
                 throw new RangeError("radix must be an integer at least 2 and no greater than 36");
@@ -76,40 +94,51 @@ export const Asciibots = (function() {
             return (id && idPattern.test(id.toLowerCase()));
         },
         random: function(length, radix) {
-            var id = "";
-            for (var i = length; i > 0; i--) {
+            let id = "";
+            for (let i = length; i > 0; i--) {
                 id = id + Math.floor(Math.random() * radix).toString(radix);
             }
             return id;
         }
-    };
-    const oneBot = function(id) {
-        var botIdDigits = idHelper.isValid(id, 3, 5, 16) ? id.split("") : idHelper.random(5, 16).split(""),
-            botString = botSplit(robots.templates[botIdDigits[botIdDigits.length - 3]])[0] +
-                botSplit(robots.templates[botIdDigits[botIdDigits.length - 2]])[1] +
-                botSplit(robots.templates[botIdDigits[botIdDigits.length - 1]])[2];
+    }
+
+    constructor( el, body ) {
+        this.el = el;
+        this.body = body;
+    }
+
+    updateAsciiBot( emoteText ){
+        const emote = this.botEmotes[emoteText] || this.botEmotes.neutral;
+        this.el.innerHTML = this.oneBot(emote + this.body)+'\n\n';
+    }
+
+    oneBot(id) {
+        let botIdDigits = this.idHelper.isValid(id, 3, 5, 16) ? id.split("") : this.idHelper.random(5, 16).split(""),
+            botString = this.botSplit(this.robots.templates[botIdDigits[botIdDigits.length - 3]])[0] +
+                this.botSplit(this.robots.templates[botIdDigits[botIdDigits.length - 2]])[1] +
+                this.botSplit(this.robots.templates[botIdDigits[botIdDigits.length - 1]])[2];
         if (botIdDigits.length >= 4) {
-            botString = replaceParts(botIdDigits[botIdDigits.length - 4], botString, robots.spareParts.eyes, 6, 1);
+            botString = this.replaceParts(botIdDigits[botIdDigits.length - 4], botString, this.robots.spareParts.eyes, 6, 1);
         }
         if (botIdDigits.length >= 5) {
-            botString = replaceParts(botIdDigits[botIdDigits.length - 5], botString, robots.spareParts.mouths, 7, 2);
+            botString = this.replaceParts(botIdDigits[botIdDigits.length - 5], botString, this.robots.spareParts.mouths, 7, 2);
         }
         return botString;
-    };
-    const replaceParts = function(id, botString, parts, x, y) {
-        var lines = botString.split("\n"),
+    }
+
+    replaceParts = function(id, botString, parts, x, y) {
+        let lines = botString.split("\n"),
             newPart = parts[id];
         lines[y] = lines[y].slice(0, x) + newPart + lines[y].slice(x + newPart.length);
         return lines.join("\n");
-    };
-    const botSplit = function(botString) {
-        var splitBot = [];
+    }
+
+    botSplit(botString) {
+        let splitBot = [];
         splitBot[0] = botString.split("\n").slice(0, 3).join("\n") + "\n";
         splitBot[1] = botString.split("\n").slice(3, 5).join("\n") + "\n";
         splitBot[2] = botString.split("\n").slice(5, 7).join("\n");
         return splitBot;
-    };
-    return {
-        bot: oneBot
-    };
-})();
+    }
+
+}

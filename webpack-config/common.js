@@ -36,7 +36,6 @@ module.exports = {
         }),
         new webpack.DefinePlugin({
             'process.env': JSON.stringify(process.env),
-            'process.env.APP_URL': process.env.ENV === 'dev' ? '"http://localhost:' + process.env.PORT_PROD + '"' : JSON.stringify(process.env.APP_URL),
             'app.config.logo': '`' + (fs.readFileSync(path.resolve(__dirname, '../src/assets/logo.txt'), 'utf-8')).replace(/\\/g, '\\\\') + '`',
         })
     ],

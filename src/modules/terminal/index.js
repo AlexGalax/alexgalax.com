@@ -1,79 +1,70 @@
+import Cookies from "js-cookie";
 import setRandomInterval from 'set-random-interval';
 import {BotApi} from "../bot-api";
-import './terminal.scss';
+import {AsciiBot} from "./utils/asciibots";
+import {createHeader, createIOElements} from "./utils/html";
 
-// @todo catch up/down and add input history
-// @todo (catch left/right and move cursor?)
-// @todo mobile input - how?
+import './style.scss';
+
+// @todo catch up/down and add input history (maybe)
+// @todo catch left/right and move cursor (maybe)
 
 export class Terminal {
+    $inputPrint;
+    $inputField;
+    $output;
+    $input;
 
     constructor($terminal, options = {}) {
+
+        // @todo: set timestamp in cookie. If t < x, skip boot process.
+        if(!Cookies.get('lastVisit')){
+            this.updateCookie();
+        }
 
         let {
             inputEnabled = false,
             cursor = '█',
-            prompt = '> '
+            prompt = '> ',
+            asciiBotBody = '000'
         } = options;
 
         this.$terminal = $terminal;
         this.prompt = prompt;
         this.botApi = new BotApi();
 
-        // @todo up/down arrow command history (low prio)
-        this.history = [];
-
         const r = document.querySelector(':root')
         r.style.setProperty('--terminal-cursor', '\'' + cursor + '\'');
         r.style.setProperty('--terminal-prompt', '\'' + prompt + '\'');
 
         // create header elements asciibot & logo
-        const header = document.createElement('div');
-        header.classList.add('header');
-            this.$headerBot = document.createElement('pre');
-            this.$headerBot.classList.add('asciibot');
-        header.append(this.$headerBot);
-            const headerLogo = document.createElement('pre');
-            headerLogo.classList.add('logo');
-            headerLogo.innerText = app.config.logo;
-        header.append(headerLogo);
-        this.$terminal.append(header);
+        this.$asciiBot = createHeader($terminal);
+        this.asciiBot = new AsciiBot(this.$asciiBot, asciiBotBody);
+        this.asciiBot.updateAsciiBot();
 
-        // create output container
-        this.$output = document.createElement('div');
-        this.$output.classList.add('output');
-        this.$terminal.append(this.$output);
-
-        // create input wrapper
-        this.$input = document.createElement('div');
-        this.$input.classList.add('input');
-        this.$terminal.append(this.$input);
-
-        // create input visual element
-        this.inputPrint = document.createElement('span');
-        this.$input.append(this.inputPrint);
-
-        // An invisible input field is needed, to have the keyboard opened
-        // on mobile devices. To keep the keyboard opened, focus is set
-        // everytime it loses focus (blur).
-        this.inputField = document.createElement('input');
-        this.inputField.addEventListener('blur', (e) => {
-            const elm = e.target;
-            setTimeout(() => elm.focus());
-        })
-        // always have the cursor at end of the input field
-        this.inputField.addEventListener('keydown', () => this.inputField.setSelectionRange(1000, 1000));
-        // listen to user input on input field
-        this.inputField.addEventListener('keyup', this.processUserKeyPress.bind(this))
-        // append to terminal
-        this.$input.append(this.inputField);
+        // creat IO Elements
+        [ this.$output, this.$input, this.$inputPrint, this.$inputField ] = createIOElements($terminal);
         // set focus
-        this.inputField.focus();
+        this.$inputField.focus();
+        // always have the cursor at end of the input field
+        this.$inputField.addEventListener('keydown', () => this.$inputField.setSelectionRange(1000, 1000));
+        // listen to user input on input field
+        this.$inputField.addEventListener('keyup', this.processUserKeyPress.bind(this))
 
         if(inputEnabled)
             this.enableInput();
         else
             this.disableInput();
+
+        console.log('lastTimeVisit', this.getTimeLastVisit());
+    }
+
+    updateCookie(){
+        Cookies.set('lastVisit', Math.floor(Date.now() / 1000), { expires: 3650 });
+    }
+
+    getTimeLastVisit(){
+        return Cookies.get('lastVisit') || Math.floor(Date.now() / 1000);
     }
 
     enableInput(){
@@ -89,41 +80,39 @@ export class Terminal {
     }
 
     clearInput(){
-        this.inputPrint.innerText = '';
-        this.inputField.value = '';
+        this.$inputPrint.innerText = '';
+        this.$inputField.value = '';
         return this;
     }
 
     processUserKeyPress(event){
-
         if(!this.isInputActive){
             event.preventDefault();
         }else{
             if(event.keyCode === 13){
                 this.processUserPrompt();
             }else if(this.isPrintable(event.keyCode)){
-                this.inputPrint.innerText = this.inputField.value;
+                this.$inputPrint.innerText = this.$inputField.value;
             }
         }
     }
 
     async processUserPrompt(){
 
-        const prompt = this.inputPrint.innerText;
+        this.updateCookie();
+        const prompt = this.$inputPrint.innerText;
 
+        this.asciiBot.updateAsciiBot('thinking');
         this.disableInput()
-            .print(this.prompt + ' ' + this.inputPrint.innerText)
+            .print(this.prompt + ' ' + this.$inputPrint.innerText)
             .clearInput()
             .break();
 
         const answer = await this.botApi.getAnswer(prompt);
-        console.log(answer);
+        this.asciiBot.updateAsciiBot(answer.mood);
         const printAnswer = answer.text || 'Sorry, I was busy right now.';
-
-        // @todo await + asciibot moods
-        this.type(printAnswer).then( () => {
-            this.break().enableInput();
-        })
+        await this.type(printAnswer, { typeSpeedMin: 10, typeSpeedMax: 50, newLine: false });
+        this.break().enableInput();
     }
 
     scrollToEnd(){
@@ -136,9 +125,16 @@ export class Terminal {
         return this;
     }
 
-    async boot(){
-        const today = new Date();
+    async boot( offsetTime ){
 
+        // if last visit is less than `offsetTime` seconds ago, don't boot again.
+        offsetTime = offsetTime ?? 3600;
+        const now = Math.floor(Date.now() / 1000);
+        if( (now - this.getTimeLastVisit()) < offsetTime ){
+            return Promise.resolve();
+        }
+
+        const today = new Date();
         await this.print('AG83-OS (TM)    Version 4.20 Release 69').break()
                   .print('(C) DeineMutter Corp').break().wait(1000);
         await this.print('Current date is ' + today.toLocaleString()).break().wait(1000);
@@ -150,6 +146,16 @@ export class Terminal {
         await this.print('OK').break().wait(200);
         await this.print('Device #01 5 MiB hard disk').break().wait(200);
         await this.print('Device #02 360 KiB 5.25" floppy *Xspeed*').break().wait(200);
+
+        return Promise.resolve();
+    }
+
+    async greet(){
+        const answer = await this.botApi.getGreeting();
+        this.asciiBot.updateAsciiBot(answer.mood);
+        const printAnswer = answer.text || 'Hello?';
+        await this.type(printAnswer, { typeSpeedMin: 10, typeSpeedMax: 50, newLine: false });
+        this.break();
     }
 
     break(){
@@ -184,6 +190,7 @@ export class Terminal {
                 interval = null;
             }
 
+            let firstPrint = true;
             let chars = text;
             if (processChars) {
                 chars = text.split("");
@@ -193,6 +200,10 @@ export class Terminal {
                 if (chars.length) {
                     let char = chars.shift();
                     this.print(char);
+                    if(firstPrint){
+                        this.scrollToEnd();
+                        firstPrint = false;
+                    }
                 } else {
 
                     resolve();

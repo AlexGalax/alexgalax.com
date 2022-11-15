@@ -2,7 +2,6 @@ const path = require('path');
 const dotenv = require('dotenv');
 const webpack = require('webpack');
 const webpackDevServer = require('webpack-dev-server');
-const cors = require('cors');
 
 dotenv.config();
 const config = require('./webpack-config/dev');
@@ -22,8 +21,9 @@ const server = new webpackDevServer(
         hot: false,
         client: false,
         port: process.env.PORT_DEV,
+        // api controller running on env port
         proxy: {
-            "/api": "http://localhost:3000"
+            "/api": "http://localhost:" + process.env.PORT_PROD
         }
     },
     compiler
@@ -36,7 +36,4 @@ const server = new webpackDevServer(
 })();
 
 // run prod server for api routes
-// @todo: watch /controller/**/* for hot reload
 const { app } = require('./server');
-
-console.log(app);

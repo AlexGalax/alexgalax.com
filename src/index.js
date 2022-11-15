@@ -1,8 +1,7 @@
 import './scss/base.scss';
-import { Terminal } from "./js/terminal";
-import { Asciibots } from "./js/asciibots";
-import { Shake, ChromaticAberration, Glitch, HorizontalScanlines, VerticalScanlines, Vignette } from './js/vfx';
-import Starfield from "./js/starfield";
+import { Terminal } from "./modules/terminal";
+import Starfield from "./modules/starfield";
+import { Shake, ChromaticAberration, Glitch, HorizontalScanlines, VerticalScanlines, Vignette } from './modules/vfx';
 
 function onload() {
 
@@ -10,26 +9,39 @@ function onload() {
     const $t = document.querySelector('.terminal');
 
     // add effects to screen
-    new Starfield($s);
-    new HorizontalScanlines($s);
-    new VerticalScanlines($s);
-    new Vignette($s, {size: '300px', opacity: 1});
+    const starfield = new Starfield($s);
+    const vfxScanlinesH = new HorizontalScanlines($s);
+    const vfxScanlinesV = new VerticalScanlines($s);
+    const vfxVignette = new Vignette($s, {size: '300px', opacity: 1});
 
     // add effects to terminal text
-    new ChromaticAberration($t);
-    new Shake($t);
-    new Glitch($t);
+    const vfxCA = new ChromaticAberration($t);
+    const vfxShake = new Shake($t);
+    const vfxGlitch = new Glitch($t);
+
+    const vfxButton = document.createElement('button');
+    vfxButton.innerText = 'Toggle Effects';
+    vfxButton.classList.add('toggleVfx');
+    vfxButton.addEventListener('click', () => {
+        starfield.toggle();
+        vfxScanlinesH.toggle();
+        vfxScanlinesV.toggle();
+        vfxVignette.toggle();
+        vfxCA.toggle();
+        vfxShake.toggle();
+        vfxGlitch.toggle();
+    });
+    document.body.append(vfxButton);
 
     // init terminal
     const terminal = new Terminal($t, {inputEnabled: false, cursor: '█'});
 
     // and boot
-    terminal.boot().then(() => {
+    terminal.boot(3600).then(async () => {
+        await terminal.greet();
+        console.log('boot done.');
         terminal.enableInput();
     });
-
-    // add asciibot to terminal header
-    document.querySelector('.header .asciibot').innerHTML = Asciibots.bot()+'\n\n';
 }
 
 window.addEventListener("load", onload);

@@ -1,3 +1,5 @@
+import './style.scss'
+
 export default class Starfield {
 
     constructor($screen) {
@@ -15,7 +17,7 @@ export default class Starfield {
             this.setCanvasExtents();
         };
 
-        requestAnimationFrame(this.init.bind(this));
+        requestAnimationFrame(this.start.bind(this));
     }
 
     setCanvasExtents() {
@@ -26,9 +28,22 @@ export default class Starfield {
         this.canvas.height = this.h;
     }
 
-    init( time ) {
+    start( time ) {
         this.prevTime = time;
+        this.active = true;
         requestAnimationFrame(this.tick.bind(this));
+    }
+
+    stop(){
+        this.active = false;
+    }
+
+    toggle(){
+        if(this.active){
+            this.stop();
+        }else{
+            requestAnimationFrame(this.start.bind(this));
+        }
     }
 
     tick( time ) {
@@ -43,7 +58,7 @@ export default class Starfield {
         const cy = this.h / 2;
 
         const count = this.stars.length;
-        for (var i = 0; i < count; i++) {
+        for (let i = 0; i < count; i++) {
             const star = this.stars[i];
 
             const x = cx + star.x / (star.z * 0.001);
@@ -59,7 +74,9 @@ export default class Starfield {
             this.putPixel(x, y, b);
         }
 
-        requestAnimationFrame(this.tick.bind(this));
+        if(this.active){
+            requestAnimationFrame(this.tick.bind(this));
+        }
     }
 
     makeStars(count) {
@@ -76,11 +93,12 @@ export default class Starfield {
     }
 
     clear() {
-        this.canvasContext.fillStyle = "#464";
+        this.canvasContext.fillStyle = "#353";
         this.canvasContext.fillRect(0, 0, this.w, this.h);
     }
 
     putPixel(x, y, brightness) {
+        brightness = brightness < 0.5 ? 0.5 : brightness;
         const intensity = brightness * 255;
         const rgb = "rgb(" + intensity + "," + intensity + "," + intensity + ")";
         const size = brightness > .75 ? (brightness > .95 ? 3 : 2) : 1;
@@ -90,7 +108,7 @@ export default class Starfield {
 
     moveStars( distance ) {
         const count = this.stars.length;
-        for (var i = 0; i < count; i++) {
+        for (let i = 0; i < count; i++) {
             const s = this.stars[i];
             s.z -= distance;
             while (s.z <= 1) {

@@ -6,7 +6,7 @@
 
 :root{
   --terminal-line-height: 1.2em;
-  --output-height-lines: 6;
+  --output-height-lines: 8;
   --terminal-cursor: "█";
   --terminal-prompt: ">";
 }
@@ -27,23 +27,25 @@
   max-height: 100vh;
   padding: 15px 0;
 
-  &:after{
+  &:before{
     content: '';
     position: absolute;
+    z-index: 0;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     border-radius: 37px;
-    background: #00000033;
-    filter: blur(2px);
+    background: rgba(255, 255, 255, 5%);
+    filter: blur(20px);
   }
 
   .header {
-    width: 100%;
-    overflow: hidden;
     display: flex;
     flex: none;
+    z-index: 1;
+    width: 100%;
+    overflow: hidden;
     align-items: end;
     justify-content: center;
     gap: .5em;
@@ -63,13 +65,15 @@
   }
 
   .output {
+    z-index: 1;
     padding: 0 20px;
     line-break: anywhere;
-    //max-height: calc(var(--output-height-lines) * var(--terminal-line-height));
+    max-height: calc(var(--output-height-lines) * var(--terminal-line-height));
     overflow: hidden;
   }
 
   .input{
+    z-index: 1;
     padding: 0 20px;
     input{
       position: absolute;
