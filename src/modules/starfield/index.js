@@ -1,21 +1,21 @@
 import './style.scss'
 
 export default class Starfield {
+    canvas;
+    canvasContext;
 
     constructor($screen) {
         this.canvas = document.createElement('canvas');
         this.canvas.classList.add('starfield');
         $screen.prepend(this.canvas);
-
-        this.canvasContext = this.canvas.getContext("2d");
         this.stars = this.makeStars(1000);
         this.prevTime = 0;
-
         this.setCanvasExtents();
 
         window.onresize = () => {
             this.setCanvasExtents();
         };
+        this.canvasContext = this.canvas.getContext("2d");
 
         requestAnimationFrame(this.start.bind(this));
     }
