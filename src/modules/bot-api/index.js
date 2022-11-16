@@ -1,5 +1,5 @@
-import uniqid from 'uniqid';
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
+import { nanoid } from 'nanoid'
 
 export class BotApi {
 
@@ -11,7 +11,9 @@ export class BotApi {
 
     createCookie(){
         const cookieName = 'userId';
-        this.userId = uniqid();
+        this.userId = nanoid(12);
+
+        //Cookies.remove(cookieName);
 
         if(!Cookies.get(cookieName)){
             Cookies.set(cookieName, this.userId, { expires: 3650 });
@@ -24,7 +26,6 @@ export class BotApi {
         if(!prompt){
             return Promise.resolve();
         }
-
         return await this.request('getAnswer', { userId: this.userId, prompt: prompt });
     }
 

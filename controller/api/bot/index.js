@@ -1,117 +1,47 @@
 'use strict'
 
-const fs = require("fs");
-const path = require("path");
 const express = require("express");
-const {Configuration, OpenAIApi} = require("openai");
-const {mysqlAddConversation} = require("../../../utils/mysql");
+const {dbGetLastConversation, dbAddDialog, dbUpdateLastConversationSummary} = require("../../../utils/mongodb");
+const {openaiGetDialogAnswer, aiFormatLastConversation, openaiGetConversationSummary, openaiGetUserGreeting} = require("../../../utils/openai");
 
-const configuration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-});
-
-const openaiConfig = {
-    botDescriptionFile: path.resolve(__dirname, 'ai_bot_description.txt'),
-    answerPromptPrefix: '\n\nHuman: ',
-    answerPromptSuffix: '\n',
-    greetingPromptPrefix: '\n\nQuiet short greeting:',
-}
-
-const openaiRequestConfig = {
-    model: process.env.OPENAI_MODEL,
-
-    // Higher values means the model will take more risks. Try 0.9 for more creative applications, and 0 (argmax sampling) for ones with a well-defined answer.
-    temperature: .9,
-    // Completions size. 1 token ~= 3/4 word
-    max_tokens: 100,
-    // How many completions to generate for each prompt.
-    n: 1,
-    // Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
-    frequency_penalty: 0.5,
-    // Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
-    presence_penalty: 0.1
-}
-
-const openai = new OpenAIApi(configuration);
-const aiTraining = fs.readFileSync(openaiConfig.botDescriptionFile, 'utf-8');
 const router = express.Router();
 
-const parseAnswer = function(firstChoice){
-    console.log('####################################################################');
-    console.log('####################################################################');
-    console.log('<choice>', firstChoice);
-    let data = {};
-    let text = firstChoice;
-    text = text.split('\n').filter(n => n);
-    text = text[0].trim();
-    console.log('<trimmed>', text);
-    text = text.match(/^(?:.*? ?(?:\((.*?)\))?:)?\s*?(.*?)$/i);
-    console.log('<parsed>', text);
-    if(text[2]){
-        data = {
-            text: text[2].trim(),
-            mood: text[1]
-        }
-    }
-    console.log('<data>', data);
-    return data;
-}
 
 router.get('/getAnswer', async function(req, res) {
 
-    const response = await openai.createCompletion({
-        ...openaiRequestConfig,
-        ...{
-            prompt: aiTraining + openaiConfig.answerPromptPrefix + req.query.prompt + openaiConfig.answerPromptSuffix,
-            // A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
-            user: req.query.userId,
-            // we want a straight forward completion
-            temperature: .05,
-            // not so long pls
-            max_tokens: 50,
-        }
-    });
+    const data = await openaiGetDialogAnswer(req.query.userId, req.query.prompt);
 
-    let data = {};
-    if(response.data.choices.length > 0){
-        data = parseAnswer(response.data.choices[0].text);
-    }
-
-    mysqlAddConversation(
+    dbAddDialog(
         req.query.userId,
         req.query.prompt,
         JSON.stringify(data),
         data.text !== undefined ? 1 : 0,
-        JSON.stringify(response.data.choices[0].text)
+        JSON.stringify(data.text)
+    ).catch(
+        //@todo: error log
+        err => console.error(err)
     );
 
-    console.log('data', data);
     res.json(data);
 });
 
 router.get('/getGreeting', async function(req, res) {
 
-    // @todo:
-    // select last record and last record with state 2
-    // if not same record, select all state 1 records until the latest state 2 record
-    // create a summary of the conversation
-    // add into db
-    // add as prompt for greeting
+    const userId = req.query.userId;
 
-    const response = await openai.createCompletion({
-        ...openaiRequestConfig,
-        ...{
-            prompt: aiTraining + openaiConfig.greetingPromptPrefix,
-            // A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
-            user: req.query.userId
+    let conversationSummary = '';
+    let lastConversation = await dbGetLastConversation(userId);
+    if(lastConversation && lastConversation.summary){
+        conversationSummary = lastConversation.summary;
+    }else if(lastConversation) {
+        const formattedConversation = aiFormatLastConversation(lastConversation);
+        if(formattedConversation){
+            conversationSummary = await openaiGetConversationSummary(formattedConversation, userId);
+            dbUpdateLastConversationSummary(userId, conversationSummary).catch(err => console.error(err));
         }
-    });
-
-    let data = {};
-    if(response.data.choices.length > 0){
-        console.log('choices: ', response.data.choices);
-        data = parseAnswer(response.data.choices[0].text);
     }
+
+    const data = await openaiGetUserGreeting(conversationSummary, userId);
 
     res.json(data);
 });

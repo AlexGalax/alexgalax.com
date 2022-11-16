@@ -151,8 +151,8 @@ export class Terminal {
 
     async greet(){
         const answer = await this.botApi.getGreeting();
-        this.asciiBot.updateAsciiBot(answer.mood);
-        const printAnswer = answer.text || 'Hello?';
+        this.asciiBot.updateAsciiBot('smile');
+        const printAnswer = answer || 'Hello?';
         await this.type(printAnswer, { typeSpeedMin: 10, typeSpeedMax: 50, newLine: false });
         this.break();
     }
@@ -189,7 +189,6 @@ export class Terminal {
                 interval = null;
             }
 
-            let firstPrint = true;
             let chars = text;
             if (processChars) {
                 chars = text.split("");
@@ -199,10 +198,7 @@ export class Terminal {
                 if (chars.length) {
                     let char = chars.shift();
                     this.print(char);
-                    if(firstPrint){
-                        this.scrollToEnd();
-                        firstPrint = false;
-                    }
+                    this.scrollToEnd();
                 } else {
 
                     resolve();
