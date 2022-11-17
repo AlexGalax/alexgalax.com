@@ -17,7 +17,8 @@ export class AsciiBot {
         "confused": "02",
         "sad": "be",
         "annoyed": "af",
-        "mad": "0f"
+        "mad": "0f",
+        "sleeping": "f9"
     }
 
     robots = {
@@ -50,7 +51,7 @@ export class AsciiBot {
                 "6": "[o]",
                 "7": "^ ^",
                 "8": ". .",
-                "9": "u u",
+                "9": "   ",
                 "a": "...",
                 "b": "_ _",
                 "c": "---",
@@ -74,7 +75,7 @@ export class AsciiBot {
                 "c": "A",
                 "d": "@",
                 "e": "e",
-                "f": "E"
+                "f": " "
             }
         }
     }

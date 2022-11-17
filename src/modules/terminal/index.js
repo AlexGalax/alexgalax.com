@@ -39,7 +39,7 @@ export class Terminal {
         // create header elements asciibot & logo
         this.$asciiBot = createHeader($terminal);
         this.asciiBot = new AsciiBot(this.$asciiBot, asciiBotBody);
-        this.asciiBot.updateAsciiBot();
+        this.asciiBot.updateAsciiBot('sleeping');
 
         // creat IO Elements
         [ this.$output, this.$input, this.$inputPrint, this.$inputField ] = createIOElements($terminal);
@@ -55,7 +55,6 @@ export class Terminal {
         else
             this.disableInput();
 
-        console.log('lastTimeVisit', this.getTimeLastVisit());
     }
 
     updateCookie(){
@@ -100,7 +99,6 @@ export class Terminal {
 
         this.updateCookie();
         const prompt = this.$inputPrint.innerText;
-
         this.asciiBot.updateAsciiBot('thinking');
         this.disableInput()
             .print(this.prompt + ' ' + this.$inputPrint.innerText)
@@ -108,9 +106,18 @@ export class Terminal {
             .break();
 
         const answer = await this.botApi.getAnswer(prompt);
-        this.asciiBot.updateAsciiBot(answer.mood);
-        const printAnswer = answer.text || 'Sorry, I was busy right now.';
-        await this.type(printAnswer, { typeSpeedMin: 10, typeSpeedMax: 50, newLine: false });
+        await this.outputAnswer(answer, 'Sorry, I couldn\'t process your input.', 'neutral');
+    }
+
+    async greet(){
+        const answer = await this.botApi.getGreeting();
+        await this.outputAnswer({text: answer}, 'Hello?', 'smile');
+    }
+
+    async outputAnswer( answer, defaultText, defaultMood ) {
+        this.asciiBot.updateAsciiBot(answer.mood ||defaultMood);
+        this.print(this.prompt + ' ');
+        await this.type(answer.text || defaultText, { typeSpeedMin: 10, typeSpeedMax: 50, newLine: false });
         this.break().enableInput();
     }
 
@@ -130,6 +137,7 @@ export class Terminal {
         offsetTime = offsetTime ?? 3600;
         const now = Math.floor(Date.now() / 1000);
         if( (now - this.getTimeLastVisit()) < offsetTime ){
+            this.updateCookie();
             return Promise.resolve();
         }
 
@@ -137,24 +145,23 @@ export class Terminal {
         await this.print('AG83-OS (TM)    Version 4.20 Release 69').break()
                   .print('(C) DeineMutter Corp').break().wait(1000);
         await this.print('Current date is ' + today.toLocaleString()).break().wait(1000);
-        await this.print('Loading system controls').type('.......................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
-        await this.print('Checking hardware status').type('................', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
+        await this.print('Checking hardware status').type('.........', { typeSpeedMin: 10, typeSpeedMax: 500, newLine: true });
         await this.print('CPU: X-Blitz (R) Kern 1337').break().wait(200);
         await this.print('Speed: 4.77 MHz').break().wait(200);
         await this.print('Memory Test: 262144 bytes').type('...... ', { typeSpeedMin: 10, typeSpeedMax: 500 });
         await this.print('OK').break().wait(200);
-        await this.print('Device #01 5 MiB hard disk').break().wait(200);
-        await this.print('Device #02 360 KiB 5.25" floppy *Xspeed*').break().wait(200);
+        await this.print('Starting [Bot Lifeform Extension B.L.E.X.(R)]').break().wait(200);
+        await this.print('Loading emotion database').type('........ ', { typeSpeedMin: 10, typeSpeedMax: 500 });
+        await this.print('OK').break().wait(200);
+        await this.print('Building common sense').type('.... ', { typeSpeedMin: 10, typeSpeedMax: 500 });
+        await this.print('OK').break().wait(200);
+        await this.print('Connecting memories').type('........ ', { typeSpeedMin: 10, typeSpeedMax: 500 });
+        await this.print('OK').break().wait(200);
+        await this.print('Waking Blex up').type('... ', { typeSpeedMin: 10, typeSpeedMax: 500 });
+        await this.print('OK').break().wait(200);
+        this.print('Data you submit, will be sent to OpenAI, L.L.C. If you are cautious about your personal data, just don\'t enter any. If you want to know how they use personal data, head over to their <a href="https://openai.com/privacy/" target="_blank">Privacy Policy</a>.').break();
 
-        return Promise.resolve();
-    }
-
-    async greet(){
-        const answer = await this.botApi.getGreeting();
-        this.asciiBot.updateAsciiBot('smile');
-        const printAnswer = answer || 'Hello?';
-        await this.type(printAnswer, { typeSpeedMin: 10, typeSpeedMax: 50, newLine: false });
-        this.break();
+        this.asciiBot.updateAsciiBot('neutral');
     }
 
     break(){

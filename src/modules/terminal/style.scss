@@ -70,6 +70,10 @@
     line-break: anywhere;
     max-height: calc(var(--output-height-lines) * var(--terminal-line-height));
     overflow: hidden;
+    a{
+      color: white;
+      text-decoration: underline;
+    }
   }
 
   .input{

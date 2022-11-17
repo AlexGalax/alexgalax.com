@@ -33,13 +33,11 @@ function onload() {
     });
     document.body.append(vfxButton);
 
-    // init terminal
+    // start terminal
     const terminal = new Terminal($t, {inputEnabled: false, cursor: '█'});
 
-    // and boot
     terminal.boot(3600).then(async () => {
         await terminal.greet();
-        console.log('boot done.');
         terminal.enableInput();
     });
 }

@@ -16,7 +16,6 @@ const openaiConfig = {
 
 const openaiRequestConfig = {
     model: process.env.OPENAI_MODEL,
-
     // Higher values means the model will take more risks. Try 0.9 for more creative applications, and 0 (argmax sampling) for ones with a well-defined answer.
     temperature: .9,
     // Completions size. 1 token ~= 3/4 word
@@ -49,7 +48,7 @@ const parseAnswer = function(firstChoice){
             mood: text[1]
         }
     }
-    console.log('<data>', data);
+
     return data;
 }
 
@@ -83,7 +82,10 @@ exports.openaiGetUserGreeting = async function(summary, userId) {
         ...{
             prompt: aiTraining + summary + '\n\n' + openaiConfig.greetingPromptPrefix,
             // A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
-            user: userId
+            user: userId,
+            // we want a completion somewhere between creative and clear
+            temperature: .7,
+            max_tokens: 50,
         }
     });
 
@@ -104,9 +106,8 @@ exports.openaiGetConversationSummary = async function(conversation, userId) {
             prompt: conversation + openaiConfig.summaryPromptPrefix,
             // A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
             user: userId,
-            // we want a straight forward completion
-            temperature: .8,
-            // not so long pls
+            // we want a completion somewhere between creative and clear
+            temperature: .6,
             max_tokens: 200,
         }
     });

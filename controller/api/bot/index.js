@@ -6,6 +6,7 @@ const {openaiGetDialogAnswer, aiFormatLastConversation, openaiGetConversationSum
 
 const router = express.Router();
 
+// @todo: catch potential errors, that might cause express to crash
 
 router.get('/getAnswer', async function(req, res) {
 
@@ -18,7 +19,7 @@ router.get('/getAnswer', async function(req, res) {
         data.text !== undefined ? 1 : 0,
         JSON.stringify(data.text)
     ).catch(
-        //@todo: error log
+        //@todo: error log: https://www.npmjs.com/package/errorlog
         err => console.error(err)
     );
 
