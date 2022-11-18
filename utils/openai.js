@@ -114,7 +114,6 @@ exports.openaiGetConversationSummary = async function(conversation, userId) {
 
     let data = {};
     if(response.data.choices.length > 0){
-        console.log('<choices>', response.data.choices[0]);
         data = response.data.choices[0].text.trim();
     }
 

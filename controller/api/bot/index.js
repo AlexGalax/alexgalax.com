@@ -1,12 +1,11 @@
 'use strict'
 
 const express = require("express");
+const log = require('../../../utils/log');
 const {dbGetLastConversation, dbAddDialog, dbUpdateLastConversationSummary} = require("../../../utils/mongodb");
 const {openaiGetDialogAnswer, aiFormatLastConversation, openaiGetConversationSummary, openaiGetUserGreeting} = require("../../../utils/openai");
 
 const router = express.Router();
-
-// @todo: catch potential errors, that might cause express to crash
 
 router.get('/getAnswer', async function(req, res) {
 
@@ -18,10 +17,7 @@ router.get('/getAnswer', async function(req, res) {
         JSON.stringify(data),
         data.text !== undefined ? 1 : 0,
         JSON.stringify(data.text)
-    ).catch(
-        //@todo: error log: https://www.npmjs.com/package/errorlog
-        err => console.error(err)
-    );
+    ).catch(err => log.error(err));
 
     res.json(data);
 });
@@ -31,7 +27,7 @@ router.get('/getGreeting', async function(req, res) {
     const userId = req.query.userId;
 
     let conversationSummary = '';
-    let lastConversation = await dbGetLastConversation(userId);
+    let lastConversation = await dbGetLastConversation(userId).catch(err => log.error(err));
     if(lastConversation && lastConversation.summary){
         conversationSummary = lastConversation.summary;
     }else if(lastConversation) {
