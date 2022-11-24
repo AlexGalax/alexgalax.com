@@ -1,6 +1,8 @@
 const {Configuration, OpenAIApi} = require("openai");
+const {debugLog, errorLog} = require('./log');
 const path = require("path");
 const fs = require("fs");
+const {dbGetLastConversation} = require("./mongodb");
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
@@ -9,6 +11,7 @@ const configuration = new Configuration({
 const openaiConfig = {
     botDescriptionFile: path.resolve(__dirname, 'ai_bot_description.txt'),
     answerPromptPrefix: '\n\nHuman: ',
+    answerBotPrefix: '\nMe ',
     answerPromptSuffix: '\n',
     greetingPromptPrefix: '\n\nShort greeting:',
     summaryPromptPrefix: 'Summary:',
@@ -91,8 +94,8 @@ exports.openaiGetUserGreeting = async function(summary, userId) {
 
     let data = {};
     if(response.data.choices.length > 0){
-        console.log('<choices>', response.data.choices[0]);
         data = response.data.choices[0].text.trim();
+        debugLog.debug('Greeting for user %s | %s', userId, data);
     }
 
     return Promise.resolve(data);
@@ -115,17 +118,33 @@ exports.openaiGetConversationSummary = async function(conversation, userId) {
     let data = {};
     if(response.data.choices.length > 0){
         data = response.data.choices[0].text.trim();
+        debugLog.debug('Conversation summary for user %s | %s', userId, data);
     }
 
     return Promise.resolve(data);
 }
 
-exports.openaiGetDialogAnswer = async function(userId, prompt) {
+exports.openaiGetDialogAnswer = async function(userId, userPrompt) {
+
+    const lastConversation = await dbGetLastConversation(userId);
+    let dialog = '';
+    if(lastConversation.dialogs.length > 0 && !lastConversation.summary){
+        dialog = lastConversation.dialogs.map((x) => {
+            let dialog = openaiConfig.answerPromptPrefix + x.prompt + openaiConfig.answerBotPrefix;
+            const completion = JSON.parse(x.completion);
+            if(completion.mood){
+                dialog = dialog + '(' + completion.mood + ')';
+            }
+            return dialog + ': ' + completion.text;
+        }).join('\n');
+    }
+
+    const prompt = aiTraining + dialog + openaiConfig.answerPromptPrefix + userPrompt + openaiConfig.answerPromptSuffix;
 
     const response = await openai.createCompletion({
         ...openaiRequestConfig,
         ...{
-            prompt: aiTraining + openaiConfig.answerPromptPrefix + prompt + openaiConfig.answerPromptSuffix,
+            prompt: prompt,
             // A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
             user: userId,
             // we want a straight forward completion
@@ -138,6 +157,7 @@ exports.openaiGetDialogAnswer = async function(userId, prompt) {
     let data = {};
     if(response.data.choices.length > 0){
         data = parseAnswer(response.data.choices[0].text);
+        debugLog.debug('User %s prompt: %s | Answer: %s | Mood: %s', userId, userPrompt, data.text, data.mood);
     }
 
     return Promise.resolve(data);

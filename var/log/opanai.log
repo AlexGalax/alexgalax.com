@@ -1,0 +1,15 @@
+2022-11-24T13:57:55.173Z - [38;5;33mDEBUG[0m - Greeting for user 18PMbm8-bISM | Hi there! I'm Blex.
+2022-11-24T13:58:35.047Z - [38;5;33mDEBUG[0m - User 18PMbm8-bISM prompt: hi i am alex | Answer: Hi, I'm Blex. Who are you? | Mood: confused
+2022-11-24T14:01:09.868Z - [38;5;33mDEBUG[0m - Greeting for user 18PMbm8-bISM | Hello, my name is Blex. How are you?
+2022-11-24T14:03:09.495Z - [38;5;33mDEBUG[0m - User 18PMbm8-bISM prompt: im good how are you? | Answer: I'm good too. How are you? | Mood: laughing
+2022-11-24T14:03:50.474Z - [38;5;33mDEBUG[0m - User 18PMbm8-bISM prompt: im not feeling so well | Answer: I'm sorry to hear that. I hope you get better soon. | Mood: serious
+2022-11-24T14:05:00.736Z - [38;5;33mDEBUG[0m - User 18PMbm8-bISM prompt: hi how are you? | Answer: I'm good, how are you? | Mood: laughing
+2022-11-24T14:05:12.550Z - [38;5;33mDEBUG[0m - User 18PMbm8-bISM prompt: i am good thank you | Answer: You're welcome. | Mood: serious
+2022-11-24T14:06:52.596Z - [38;5;33mDEBUG[0m - Conversation summary for user 18PMbm8-bISM | The human greets the other human, and they exchange pleasantries. The human then asks how the other human is doing, and the other human replies that they are good. The human then says that they are good too, and the two exchange a smile.
+2022-11-24T14:06:53.313Z - [38;5;33mDEBUG[0m - Greeting for user 18PMbm8-bISM | Hello! How are you doing?
+2022-11-24T14:07:13.958Z - [38;5;33mDEBUG[0m - User 18PMbm8-bISM prompt: Hi, im doing good | Answer: Hi, im doing good too. | Mood: serious
+2022-11-24T14:09:04.958Z - [38;5;33mDEBUG[0m - Conversation summary for user 18PMbm8-bISM | The two people exchange a brief hello and seem to be doing well.
+2022-11-24T14:09:05.789Z - [38;5;33mDEBUG[0m - Greeting for user 18PMbm8-bISM | Hi, I'm Blex. Can you help me understand who I am?
+2022-11-24T14:09:49.718Z - [38;5;33mDEBUG[0m - Greeting for user 18PMbm8-bISM | Hi! My name is Blex and I am a full stack developer from Augsburg, Germany.
+2022-11-24T14:10:36.810Z - [38;5;33mDEBUG[0m - User 18PMbm8-bISM prompt: hi i am alex | Answer: Hi, I'm Blex. Who are you? | Mood: confused
+2022-11-24T14:10:44.958Z - [38;5;33mDEBUG[0m - User 18PMbm8-bISM prompt: i am alex | Answer: undefined | Mood: undefined

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const log = require('./log');
+const {errorLog} = require('./log');
 
 const dialogSchema = new mongoose.Schema({
     prompt: String,
@@ -21,22 +21,31 @@ const User = mongoose.model('User', userSchema);
 async function dbConnect(){
     return await mongoose.connect(process.env.MONGO_DB_CONNECTION)
     .catch(() => {
-        log.error("can't connect to database " + process.env.MONGO_DB_CONNECTION);
+        errorLog.error("can't connect to database " + process.env.MONGO_DB_CONNECTION);
         return  Promise.resolve(false);
     });
 }
 
 async function dbGetRecordById(model, id){
-    return await model.findById(id).exec().catch(
-        (err) => {
-            log.error("can't get record from database. Error: %j" + err);
+    return await model.findById(id).exec()
+        .catch((err) => {
+            errorLog.error("can't get record from database. Error: %j" + err);
+            return  Promise.resolve(false);
+        }
+    );
+}
+
+async function dbSaveRecord(record){
+    return await record.save()
+        .catch((err) => {
+            errorLog.error("can't save record to database. Error: %j " + err);
             return  Promise.resolve(false);
         }
     );
 }
 
 /**
- * let last conversation of user
+ * get last conversation of user
  * @param userId
  * @returns {Promise<array>}
  */
@@ -46,7 +55,7 @@ exports.dbGetLastConversation = async function(userId) {
         return Promise.resolve([]);
     }
 
-    let user = dbGetRecordById(User, userId);
+    let user = await dbGetRecordById(User, userId);
     return user ? Promise.resolve(user.conversations.slice(-1)[0]) : Promise.resolve([]);
 }
 
@@ -56,13 +65,13 @@ exports.dbUpdateLastConversationSummary = async function(userId, summary) {
         return Promise.resolve([]);
     }
 
-    let user = await User.findById(userId).exec().catch((err) => log.error("can't get record to database. Error: %j ", err))
+    let user = await dbGetRecordById(User, userId);
     if(!user){
         return Promise.resolve([]);
     }else{
         const index = user.conversations.length - 1;
         user.conversations[index].summary = summary;
-        return await user.save().catch((err) => log.error("can't save record to database. Error: %j ", err));
+        return await dbSaveRecord(user);
     }
 }
 
@@ -73,7 +82,7 @@ exports.dbAddDialog = async function(userId, prompt, completion, state, choice) 
     }
 
     const data = { prompt: prompt, completion: completion, state: state, choice: choice };
-    let user = await User.findById(userId).exec();
+    let user = await dbGetRecordById(User, userId);
 
     if(!user){
         // if user id doesn't exist, creat new record
@@ -96,6 +105,6 @@ exports.dbAddDialog = async function(userId, prompt, completion, state, choice) 
         }
     }
 
-    return await user.save();
+    return await dbSaveRecord(user);
 }
 

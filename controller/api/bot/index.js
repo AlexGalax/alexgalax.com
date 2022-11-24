@@ -1,7 +1,7 @@
 'use strict'
 
 const express = require("express");
-const log = require('../../../utils/log');
+const {errorLog} = require('../../../utils/log');
 const {dbGetLastConversation, dbAddDialog, dbUpdateLastConversationSummary} = require("../../../utils/mongodb");
 const {openaiGetDialogAnswer, aiFormatLastConversation, openaiGetConversationSummary, openaiGetUserGreeting} = require("../../../utils/openai");
 
@@ -17,7 +17,7 @@ router.get('/getAnswer', async function(req, res) {
         JSON.stringify(data),
         data.text !== undefined ? 1 : 0,
         JSON.stringify(data.text)
-    ).catch(err => log.error(err));
+    ).catch(err => errorLog.error(err));
 
     res.json(data);
 });
