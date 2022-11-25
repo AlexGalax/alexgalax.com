@@ -9,7 +9,7 @@ const configuration = new Configuration({
 });
 
 const openaiConfig = {
-    botDescriptionFile: path.resolve(__dirname, 'ai_bot_description.txt'),
+    botDescriptionFile: path.resolve(__dirname, '../var/text/ai_bot_description.txt'),
     answerPromptPrefix: '\n\nHuman: ',
     answerBotPrefix: '\nMe ',
     answerPromptSuffix: '\n',
@@ -35,16 +35,11 @@ const openai = new OpenAIApi(configuration);
 const aiTraining = fs.readFileSync(openaiConfig.botDescriptionFile, 'utf-8');
 
 const parseAnswer = function(firstChoice){
-    // console.log('####################################################################');
-    // console.log('####################################################################');
-    // console.log('<choice>', firstChoice);
     let data = {};
     let text = firstChoice;
     text = text.split('\n').filter(n => n);
     text = text[0].trim();
-    // console.log('<trimmed>', text);
     text = text.match(/^(?:.*? ?(?:\((.*?)\))?:)?\s*?(.*?)$/i);
-    // console.log('<parsed>', text);
     if(text[2]){
         data = {
             text: text[2].trim(),
@@ -128,7 +123,7 @@ exports.openaiGetDialogAnswer = async function(userId, userPrompt) {
 
     const lastConversation = await dbGetLastConversation(userId);
     let dialog = '';
-    if(lastConversation.dialogs.length > 0 && !lastConversation.summary){
+    if(lastConversation.dialogs !== undefined && lastConversation.dialogs.length > 0 && !lastConversation.summary){
         dialog = lastConversation.dialogs.map((x) => {
             let dialog = openaiConfig.answerPromptPrefix + x.prompt + openaiConfig.answerBotPrefix;
             const completion = JSON.parse(x.completion);

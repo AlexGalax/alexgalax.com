@@ -43,12 +43,19 @@ export class Terminal {
 
         // creat IO Elements
         [ this.$output, this.$input, this.$inputPrint, this.$inputField ] = createIOElements($terminal);
-        // set focus
-        this.$inputField.focus();
         // always have the cursor at end of the input field
-        this.$inputField.addEventListener('keydown', () => this.$inputField.setSelectionRange(1000, 1000));
-        // listen to user input on input field
-        this.$inputField.addEventListener('keyup', this.processUserKeyPress.bind(this))
+        this.$inputField.addEventListener('keydown', () => {
+            this.$inputField.setSelectionRange(1000, 1000);
+            this.processUserKeyPress.bind(this);
+        });
+
+        document.addEventListener('click', () => {
+            if(this.isInputActive){
+                this.$inputField.focus();
+            }
+        });
+
+        this.inputlength = 0;
 
         if(inputEnabled)
             this.enableInput();
@@ -68,6 +75,7 @@ export class Terminal {
     enableInput(){
         this.isInputActive = true;
         this.$input.classList.add('active');
+        this.$inputField.focus();
         return this;
     }
 
@@ -80,6 +88,7 @@ export class Terminal {
     clearInput(){
         this.$inputPrint.innerText = '';
         this.$inputField.value = '';
+        this.inputlength = 0;
         return this;
     }
 
@@ -89,7 +98,8 @@ export class Terminal {
         }else{
             if(event.keyCode === 13){
                 this.processUserPrompt();
-            }else if(this.isPrintable(event.keyCode)){
+            }else if(this.isInputPrintable()){
+                this.inputlength = this.$inputField.value.length;
                 this.$inputPrint.innerText = this.$inputField.value;
             }
         }
@@ -141,6 +151,7 @@ export class Terminal {
             return Promise.resolve();
         }
 
+        this.updateCookie();
         const today = new Date();
         await this.print('AG83-OS (TM)    Version 4.20 Release 69').break()
                   .print('(C) DeineMutter Corp').break().wait(1000);
@@ -159,9 +170,10 @@ export class Terminal {
         await this.print('OK').break().wait(200);
         await this.print('Waking Blex up').type('... ', { typeSpeedMin: 10, typeSpeedMax: 500 });
         await this.print('OK').break().wait(200);
-        this.print('Data you submit, will be sent to OpenAI, L.L.C. If you are cautious about your personal data, just don\'t enter any. If you want to know how they use personal data, head over to their <a href="https://openai.com/privacy/" target="_blank">Privacy Policy</a>.').break();
+        this.print('Data you submit will be sent to OpenAI, L.L.C. If you are cautious about your personal data, just don\'t enter any. If you want to know how they use personal data, head over to their <a href="https://openai.com/privacy/" target="_blank">Privacy Policy</a>.').break();
 
         this.asciiBot.updateAsciiBot('neutral');
+
     }
 
     break(){
@@ -221,16 +233,11 @@ export class Terminal {
         }
     }
 
-    isPrintable(keycode) {
+    isInputPrintable() {
+        // user input is printable, if length of the input did change. Any character or backspace.
         return (
-            (keycode > 47 && keycode < 58) || // number keys
-            keycode === 32 || // space & return key(s) (if you want to allow carriage returns)
-            (keycode > 64 && keycode < 91) || // letter keys
-            (keycode > 95 && keycode < 112) || // numpad keys
-            (keycode > 185 && keycode < 193) || // ;=,-./` (in order)
-            (keycode === 8 || keycode === 46) || // backspace & del
-            (keycode === 0 || keycode === 229) || // android always 229 (or 0) lol
-            (keycode > 218 && keycode < 223)
-        );
+            this.inputlength > this.$inputField.value.length
+            || this.inputlength < this.$inputField.value.length
+        )
     }
 }

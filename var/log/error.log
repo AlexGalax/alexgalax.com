@@ -9,3 +9,4 @@
 2022-11-24T14:03:39.497Z - [38;5;167mERROR[0m - can't connect to database mongodb://localhost:27017/blex
 2022-11-24T14:03:49.507Z - [38;5;167mERROR[0m - can't get record from database. Error: %jMongooseError: Operation `users.findOne()` buffering timed out after 10000ms
 2022-11-24T14:04:20.477Z - [38;5;167mERROR[0m - can't connect to database mongodb://localhost:27017/blex
+2022-11-25T07:23:35.912Z - [38;5;167mERROR[0m - can't connect to database mongodb://localhost:27017/blex

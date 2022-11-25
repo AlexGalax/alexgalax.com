@@ -4,8 +4,6 @@ import { nanoid } from 'nanoid'
 export class BotApi {
 
     constructor() {
-
-        // @todo: ask user, if I'm allowed to save a cookie, to remember the conversation.
         this.createCookie();
     }
 

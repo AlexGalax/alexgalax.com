@@ -36,7 +36,7 @@ export function createIOElements($terminal) {
     
     // An invisible input field is needed, to have the keyboard opened
     // on mobile devices. To keep the keyboard opened, focus is set
-    // everytime it loses focus (blur).
+    // everytime it loses focus (blur), or document is clicked anywhere
     const $inputField = document.createElement('input');
     $inputField.addEventListener('blur', (e) => {
         const elm = e.target;
@@ -44,6 +44,6 @@ export function createIOElements($terminal) {
     });
     // append to terminal
     $input.append($inputField);
-
+    
     return [ $output, $input, $inputPrint, $inputField ]
 }

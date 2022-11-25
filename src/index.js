@@ -36,7 +36,7 @@ function onload() {
     // start terminal
     const terminal = new Terminal($t, {inputEnabled: false, cursor: '█'});
 
-    terminal.boot(3600).then(async () => {
+    terminal.boot(0).then(async () => {
         await terminal.greet();
         terminal.enableInput();
     });
