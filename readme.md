@@ -16,30 +16,28 @@ Terminal style ai bot, based on openai.
 `npm install`
 
 #### create environment variables
-Create file
+Create environment file
 ```bash
-cp .env.example .env
+$ cp .env.example .env
 ```
-and edit `.env` and set your openai key & model.
+Edit `.env` and set your openai key & model.
 
 #### Run dev mode
 
 Run
 ```shell
-npm run dev
+$ npm run dev
 ```
-and open `localhost:3001`. Hot reload is configured in webpack, so any file changes in `/src` will reload the page.
+and open `localhost:3001`. Hot reload is configured in webpack, so any file changes in `/src` will reload the page. This is good for changes in html orr css. If no full reload of the page is needed, set parameter `hot=true` in `server-de.js` config entry and restart. Now only the js modules are reloading in the background.
 
 #### Check production mode
 
-Change port in `APP_URL` to 3000. Run
+Change port in `APP_URL` to 3000. Build app and start server:
 ```shell
-npm run build
+$ npm run build
+$ npm run start
 ```
-and start server with
-```shell
-npm run start
-```
+
 The website is available at `localhost:3000`.
 
 #### Run production mode
@@ -78,7 +76,7 @@ Scheme of the userdata:
         {
           "prompt": "",
           "completion": "{\"text\":\"\",\"mood\":\"\"}",
-          "state": true || false,
+          "state": true,
           "choice": "",
           "_id": {
             "$oid": "6375174a7551bd469995a359"
