@@ -44,10 +44,9 @@ export class Terminal {
         // creat IO Elements
         [ this.$output, this.$input, this.$inputPrint, this.$inputField ] = createIOElements($terminal);
         // always have the cursor at end of the input field
-        this.$inputField.addEventListener('keydown', () => {
-            this.$inputField.setSelectionRange(1000, 1000);
-            this.processUserKeyPress.bind(this);
-        });
+        this.$inputField.addEventListener('keydown', this.processUserKeyPress.bind(this));
+        this.$inputField.addEventListener('keyup', this.processUserKeyPress.bind(this));
+
 
         document.addEventListener('click', () => {
             if(this.isInputActive){
@@ -93,6 +92,7 @@ export class Terminal {
     }
 
     processUserKeyPress(event){
+        this.$inputField.setSelectionRange(1000, 1000);
         if(!this.isInputActive){
             event.preventDefault();
         }else{
@@ -148,6 +148,7 @@ export class Terminal {
         const now = Math.floor(Date.now() / 1000);
         if( (now - this.getTimeLastVisit()) < offsetTime ){
             this.updateCookie();
+            this.asciiBot.updateAsciiBot('neutral');
             return Promise.resolve();
         }
 

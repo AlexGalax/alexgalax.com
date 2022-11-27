@@ -3,3 +3,4 @@ upload.sh
 /.idea
 /node_modules
 /dist
+/var/log/*

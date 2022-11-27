@@ -84,8 +84,7 @@
       display: block;
       border: none;
       padding: 0;
-      margin: 0;
-      margin-left: -99999px;
+      margin: 0 0 0 -99999px;
     }
     &::after, &::before{
       visibility: hidden;

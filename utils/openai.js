@@ -134,6 +134,8 @@ exports.openaiGetDialogAnswer = async function(userId, userPrompt) {
         }).join('\n');
     }
 
+    // @todo add summary of the previous conversation
+
     const prompt = aiTraining + dialog + openaiConfig.answerPromptPrefix + userPrompt + openaiConfig.answerPromptSuffix;
 
     const response = await openai.createCompletion({
