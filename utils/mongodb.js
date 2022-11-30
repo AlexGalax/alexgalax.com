@@ -72,9 +72,13 @@ exports.dbGetLastConversationSummary = async function(userId) {
     }
 
     let user = await dbGetRecordById(User, userId);
-    user.conversations = user.conversations.filter(conversation => conversation.summary && conversation.summary.length > 0);
+    if(user){
+        user.conversations = user.conversations.filter(conversation => conversation.summary && conversation.summary.length > 0);
 
-    return user.conversations ? Promise.resolve(user.conversations.slice(-1)[0].summary) : Promise.resolve('');
+        return user.conversations ? Promise.resolve(user.conversations.slice(-1)[0].summary) : Promise.resolve('');
+    }
+
+    return Promise.resolve('');
 }
 
 /**

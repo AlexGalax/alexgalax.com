@@ -140,13 +140,10 @@ mongoexport --collection=users --db=blex --out=bot-conversations.json
 
 Hard part is, to review all the dialogs, and change the answers the way the bot should answer instead. After this is done, a very own openai model can be created by fine-tuning. There is a good tutorial how it's done: https://beta.openai.com/docs/guides/fine-tuning
 
-Openai gives a name for the new model, witch has to be updated in `.env`. The content of `ai_bot_description.txt` is no longer needed and can be cleared (don't remove file). Also, the old records can be deleted from the database, to have a fresh set of conversations of the new model.
+Openai gives a name for the new model, witch has to be updated in `.env`. The content of `OPEN_AI_DESC_FILE` is no longer needed and can be removed. Also, the old records can be deleted from the database, to have a fresh set of conversations of the new model.
 
-The bot now should behave like expected. More or less. This fine-tuning process can be done repeatedly, to get more and more properly generated answers.
+The bot now should behave like expected, more or less. This fine-tuning process can be done repeatedly, to get more and more properly generated answers.
 
-## Todos
-- add summary of previous conversation in `openaiGetDialogAnswer()`
-- add environment variable that flags, if the openai model is custom. `ai_bot_description.txt` doesn't need to get read if it's a custom model and can be deleted. 
 
 ## Sources
 - [OpenAI](https://beta.openai.com)
