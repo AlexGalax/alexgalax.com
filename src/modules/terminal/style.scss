@@ -10,7 +10,9 @@
   --terminal-cursor: "█";
   --terminal-prompt: ">";
 }
-
+.terminal-wrapper{
+  transform: skew(2deg, -1deg);
+}
 .terminal {
   position: relative;
   z-index: 1;

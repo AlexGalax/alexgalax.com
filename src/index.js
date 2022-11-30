@@ -21,7 +21,7 @@ function onload() {
 
     const vfxButton = document.createElement('button');
     vfxButton.innerText = 'Toggle Effects';
-    vfxButton.classList.add('toggleVfx');
+    vfxButton.classList.add('toggle-vfx');
     vfxButton.addEventListener('click', () => {
         starfield.toggle();
         vfxScanlinesH.toggle();

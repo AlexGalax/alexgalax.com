@@ -2,18 +2,18 @@ const {Configuration, OpenAIApi} = require("openai");
 const {debugLog, errorLog} = require('./log');
 const path = require("path");
 const fs = require("fs");
-const {dbGetLastConversation} = require("./mongodb");
+const {dbGetLastConversation, dbGetLastConversationSummary} = require("./mongodb");
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-const openaiConfig = {
-    botDescriptionFile: path.resolve(__dirname, '../var/text/ai_bot_description.txt'),
-    answerPromptPrefix: '\n\nHuman: ',
-    answerBotPrefix: '\nMe ',
-    answerPromptSuffix: '\n',
-    greetingPromptPrefix: '\n\nShort greeting:',
+const conversationConfig = {
+    firstPerson: 'Me',
+    secondPerson: 'Human',
+    delimiterPrompt: '\n',
+    delimiterDialog: '\n\n',
+    greetingPromptPrefix: 'Brief greeting:',
     summaryPromptPrefix: 'Summary:',
 }
 
@@ -32,7 +32,11 @@ const openaiRequestConfig = {
 }
 
 const openai = new OpenAIApi(configuration);
-const aiTraining = fs.readFileSync(openaiConfig.botDescriptionFile, 'utf-8');
+
+let botDescription = '';
+if(process.env.OPEN_AI_DESC_FILE){
+    botDescription = fs.readFileSync(path.resolve(__dirname, '../', process.env.OPEN_AI_DESC_FILE), 'utf-8');
+}
 
 const parseAnswer = function(firstChoice){
     let data = {};
@@ -58,11 +62,13 @@ exports.aiFormatLastConversation = function(lastConversation){
             if(!completion.text){
                 return '';
             }
-            let row = 'Human: ' + dialog.prompt + '\nMe';
+
+            let row = conversationConfig.secondPerson + ': ' + dialog.prompt + conversationConfig.delimiterPrompt;
+            row = row + conversationConfig.firstPerson;
             if (completion.mood) {
                 row = row + ' (' + completion.mood + ')';
             }
-            row = row + ': ' + completion.text + '\n\n';
+            row = row + ': ' + completion.text + conversationConfig.delimiterDialog;
             return row;
         });
         return formattedConversation.join('');
@@ -78,7 +84,7 @@ exports.openaiGetUserGreeting = async function(summary, userId) {
     const response = await openai.createCompletion({
         ...openaiRequestConfig,
         ...{
-            prompt: aiTraining + summary + '\n\n' + openaiConfig.greetingPromptPrefix,
+            prompt: botDescription + summary + '\n\n' + conversationConfig.greetingPromptPrefix,
             // A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
             user: userId,
             // we want a completion somewhere between creative and clear
@@ -90,6 +96,7 @@ exports.openaiGetUserGreeting = async function(summary, userId) {
     let data = {};
     if(response.data.choices.length > 0){
         data = response.data.choices[0].text.trim();
+        //debugLog.debug(botDescription + summary + '\n\n' + conversationConfig.greetingPromptPrefix);
         debugLog.debug('Greeting for user %s | %s', userId, data);
     }
 
@@ -101,7 +108,7 @@ exports.openaiGetConversationSummary = async function(conversation, userId) {
     const response = await openai.createCompletion({
         ...openaiRequestConfig,
         ...{
-            prompt: conversation + openaiConfig.summaryPromptPrefix,
+            prompt: conversation + conversationConfig.summaryPromptPrefix,
             // A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
             user: userId,
             // we want a completion somewhere between creative and clear
@@ -122,21 +129,24 @@ exports.openaiGetConversationSummary = async function(conversation, userId) {
 exports.openaiGetDialogAnswer = async function(userId, userPrompt) {
 
     const lastConversation = await dbGetLastConversation(userId);
+    const lastSummary = await dbGetLastConversationSummary(userId);
+
     let dialog = '';
     if(lastConversation.dialogs !== undefined && lastConversation.dialogs.length > 0 && !lastConversation.summary){
         dialog = lastConversation.dialogs.map((x) => {
-            let dialog = openaiConfig.answerPromptPrefix + x.prompt + openaiConfig.answerBotPrefix;
+            let dialog = conversationConfig.delimiterDialog +
+                conversationConfig.secondPerson + ': ' + x.prompt + conversationConfig.delimiterPrompt +
+                conversationConfig.firstPerson;
             const completion = JSON.parse(x.completion);
             if(completion.mood){
-                dialog = dialog + '(' + completion.mood + ')';
+                dialog = dialog + ' (' + completion.mood + ')';
             }
             return dialog + ': ' + completion.text;
         }).join('\n');
     }
 
-    // @todo add summary of the previous conversation
-
-    const prompt = aiTraining + dialog + openaiConfig.answerPromptPrefix + userPrompt + openaiConfig.answerPromptSuffix;
+    const prompt = botDescription + '\n\n' + lastSummary + dialog + conversationConfig.delimiterDialog
+         + conversationConfig.secondPerson + ': ' + userPrompt + conversationConfig.delimiterPrompt;
 
     const response = await openai.createCompletion({
         ...openaiRequestConfig,

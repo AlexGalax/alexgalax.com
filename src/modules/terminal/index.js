@@ -28,7 +28,6 @@ export class Terminal {
             asciiBotBody = '000'
         } = options;
 
-        this.$terminal = $terminal;
         this.prompt = prompt;
         this.botApi = new BotApi();
 

@@ -27,9 +27,9 @@ module.exports = {
 
     plugins: [
         new HtmlWebpackPlugin({
-            title: 'alexgalax.com',
+            title: 'B.L.E.X. - alexgalax.com',
             template: './src/index.html',
-            // @todo: favicon: paths.src + '/images/favicon.png',
+            favicon: './src/assets/favicon.jpg',
             meta: {
                 viewport: 'width=device-width, initial-scale=1'
             }

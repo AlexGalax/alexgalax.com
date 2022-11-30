@@ -43,11 +43,5 @@ module.exports = merge(common, {
     watchOptions: {
         poll: true,
         ignored: /node_modules/,
-    },
-
-    plugins: [
-        new webpack.DefinePlugin({
-            'process.env.APP_URL': '"http://localhost:' + process.env.PORT_DEV + '"',
-        })
-    ]
+    }
 })

@@ -44,8 +44,9 @@ async function dbSaveRecord(record){
     );
 }
 
+
 /**
- * get last conversation of user
+ * get summary of last conversation
  * @param userId
  * @returns {Promise<array>}
  */
@@ -59,6 +60,29 @@ exports.dbGetLastConversation = async function(userId) {
     return user ? Promise.resolve(user.conversations.slice(-1)[0]) : Promise.resolve([]);
 }
 
+/**
+ * get last conversation
+ * @param userId
+ * @returns {Promise<array>}
+ */
+exports.dbGetLastConversationSummary = async function(userId) {
+    const c = await dbConnect();
+    if(c === false){
+        return Promise.resolve([]);
+    }
+
+    let user = await dbGetRecordById(User, userId);
+    user.conversations = user.conversations.filter(conversation => conversation.summary && conversation.summary.length > 0);
+
+    return user.conversations ? Promise.resolve(user.conversations.slice(-1)[0].summary) : Promise.resolve('');
+}
+
+/**
+ * Update summary of last conversation
+ * @param userId
+ * @param summary
+ * @returns {Promise<*[]|*>}
+ */
 exports.dbUpdateLastConversationSummary = async function(userId, summary) {
     const c = await dbConnect();
     if(c === false){
@@ -75,6 +99,15 @@ exports.dbUpdateLastConversationSummary = async function(userId, summary) {
     }
 }
 
+/**
+ * Add dialog to last conversation
+ * @param userId
+ * @param prompt
+ * @param completion
+ * @param state
+ * @param choice
+ * @returns {Promise<*[]|*>}
+ */
 exports.dbAddDialog = async function(userId, prompt, completion, state, choice) {
     const c = await dbConnect();
     if(c === false){

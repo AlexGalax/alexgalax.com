@@ -9,30 +9,29 @@ Terminal style ai bot, based on openai.
 
 ## Getting started
 
-#### clone this repo
+#### Clone this repo
 `git clone git@github.com:AlexGalax/alexgalax.com.git`
 
-#### install dependencies
+#### Install dependencies
 `npm install`
 
-#### create environment variables
-Create environment file
+#### Create environment variables
+Create the environment file
 ```bash
 $ cp .env.example .env
 ```
-Edit `.env` and set your openai key & model.
+Edit `.env` and set your openai key, model and database name.
 
 #### Run dev mode
 
-Run
 ```shell
 $ npm run dev
 ```
-and open `localhost:3001`. Hot reload is configured in webpack, so any file changes in `/src` will reload the page. This is good for changes in html orr css. If no full reload of the page is needed, set parameter `hot=true` in `server-de.js` config entry and restart. Now only the js modules are reloading in the background.
+The website is available at `localhost:3001`. Hot reload is configured in webpack, so any file changes in `/src` will reload the full page. This is good for changes in html or css. If a full reload of the page is not needed, set parameter `hot=true` in `server-de.js` config entry and restart. Now only the js modules are reloading in the background.
 
 #### Check production mode
 
-Change port in `APP_URL` to 3000. Build app and start server:
+Change port in `APP_URL` to 3000, build files and start server:
 ```shell
 $ npm run build
 $ npm run start
@@ -42,24 +41,37 @@ The website is available at `localhost:3000`.
 
 #### Run production mode
 
-Clone repo onto your server. Change `APP_ENV=prod` and `APP_URL` to your websites url. Build all the files and run it
+Clone repo onto the server. Change `APP_ENV=prod` and `APP_URL` to the website url. Build all the files and start the server
 ```shell
-npm run build
-npm run start
+$ npm run build
+$ npm run start
 ```
 If you want the terminal detached, instead run 
 ```shell
-npm run start > stdout.txt 2> stderr.txt &
+$ npm run start > stdout.txt 2> stderr.txt &
 ```
+If the server crashes, error will be logged in `stderr.txt`.
 
 ## Setup ai part 1
 
 The first step is to set up a basic description for the bot, followed by an example conversation. Give some answers to question, that contain some information and the way you want the bot to behave.
-This is set up in `var/text/ai_bot_description.txt`. This text will be sent to any openai completion request.
+The description will be taken from the file in `OPEN_AI_DESC_FILE`. The text in this file will be sent to any openai completion request.
 
-It hasn't to be perfect. Its just used to have a very basic behaviour to collect some conversation data.
+The dialog partner is always defined by _human_ and _me_. This should make it easier for openai to understand the dialog.
+```text
+Human: How are you?
+Me: I'm good, thank you.
+```
+As an additional feature, a mood for the bot on every dialog is also given, so openai should also complete with a mood every time:
+```text
+Human: How are you?
+Me (happy): I'm good, thank you.
+```
+The naming and delimiters are configured in `utils/openai.js`. The mood is parsed from the answer and the little ascii bot changes its expression based on the mood in the completion. Ascii bot expressions can be extended in `src/modules/terminal/utils/asciibots.js`.
 
-## DB records
+The overall description hasn't to be perfect. Its just used to have a very basic behaviour to collect some conversation data.
+
+## Db records
 
 When the user visits the website the first time, a random id is created and stored in a cookie. This id is sent with every request to check, if there is any previous conversation of that user.
 
@@ -105,17 +117,17 @@ Scheme of the userdata:
 }
 ```
 
-Every user has a list of `conversations`, witch contains a list of `dialogs` and a `summary` of that conversation. Each `dialog` is a set of a `prompt` and the ai generated `completion`. `choice` contains the unformatted answer of the ai and state is either `true` if the completion could be parsed.
+Every user has a list of `conversations`, witch contains a list of `dialogs` and a `summary` of that conversation. Each `dialog` is a set of a `prompt` and the ai generated `completion`. `choice` contains the unformatted answer of the ai and `state` is `true`, if the completion could be parsed.
 
 ## Greetings, human!
 
-Everytime a user loads the page, a database lookup is made, to check if there is a previous conversation without a summary of that conversation. If this is the case, a request to openai is made, to get a summary of that conversation, and it's stored in the database.
+Everytime a user loads the page, a database lookup is made, to check if there is a previous conversation without a summary. If this is the case, a request to openai is made, to get a summary of that conversation, and it's stored in the database.
 
-Now it's time to get a greeting. First thing that is added, is the text in `ai_bot_description.txt`. Second thing is the summary of the previous conversation, if there is one.
+Now it's time to get a greeting. First thing that is added, is the text from `OPEN_AI_DESC_FILE`. Second thing is the summary of the previous conversation, if there is one.
 
 ## Let's talk
 
-Now everytime the user talks to the bot, a database lookup is made to see, if there is an ongoing conversation (last one without a summary). This conversation dialogs are formatted, appended to `ai_bot_description.txt` and send to openai to get a completion. This completion is stored as a new dialog in the current conversation.
+Now everytime the user talks to the bot, a database lookup is made to see, if there is an ongoing conversation (last one without a summary). This conversation dialogs are formatted, appended to `OPEN_AI_DESC_FILE` and send to openai to get a completion. This completion is stored as a new dialog in the current conversation.
 
 That's a lot of text send to get a completion, but this way the bot not only "knows" the history of the current conversation, but also "remembers" the summary of last one.
 

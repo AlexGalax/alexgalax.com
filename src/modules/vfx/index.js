@@ -29,8 +29,6 @@ export class ChromaticAberration {
         this.maxOffsetX = maxOffsetX;
         this.maxOffsetY = maxOffsetY;
 
-        // @todo: fork https://github.com/jabacchetta/set-random-interval
-        // pass random interval value to callback function
         this.el.style.transition = 'text-shadow ' + intervalMin + 'ms ease';
 
         this.play();
