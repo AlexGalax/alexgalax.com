@@ -11,8 +11,6 @@ export class BotApi {
         const cookieName = 'userId';
         this.userId = nanoid(12);
 
-        //Cookies.remove(cookieName);
-
         if(!Cookies.get(cookieName)){
             Cookies.set(cookieName, this.userId, { expires: 3650 });
         }else{

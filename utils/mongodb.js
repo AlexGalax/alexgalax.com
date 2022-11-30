@@ -74,8 +74,8 @@ exports.dbGetLastConversationSummary = async function(userId) {
     let user = await dbGetRecordById(User, userId);
     if(user){
         user.conversations = user.conversations.filter(conversation => conversation.summary && conversation.summary.length > 0);
-
-        return user.conversations ? Promise.resolve(user.conversations.slice(-1)[0].summary) : Promise.resolve('');
+        
+        return user.conversations.length > 0 ? Promise.resolve(user.conversations.slice(-1)[0].summary) : Promise.resolve('');
     }
 
     return Promise.resolve('');
