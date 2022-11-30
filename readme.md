@@ -144,12 +144,12 @@ Openai gives a name for the new model, witch has to be updated in `.env`. The co
 
 The bot now should behave like expected, more or less. This fine-tuning process can be done repeatedly, to get more and more properly generated answers.
 
+## Todo
+- Catch openai error response 
 
 ## Sources
 - [OpenAI](https://beta.openai.com)
 - [ascii bots](https://github.com/walsh9/asciibots)
-
-
 
 ## Author
 [Alexander Schornberg](https://www.alexgalax.com)
