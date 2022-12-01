@@ -10,17 +10,20 @@ Terminal style ai bot, based on openai.
 ## Getting started
 
 #### Clone this repo
-`git clone git@github.com:AlexGalax/alexgalax.com.git`
+```bash
+$ git clone git@github.com:AlexGalax/alexgalax.com.git
+```
 
 #### Install dependencies
-`npm install`
+```bash
+$ npm install
+```
 
 #### Create environment variables
-Create the environment file
 ```bash
 $ cp .env.example .env
 ```
-Edit `.env` and set your openai key, model and database name.
+Create file, edit `.env` and set your openai key, model and database name.
 
 #### Run dev mode
 
@@ -135,17 +138,17 @@ That's a lot of text send to get a completion, but this way the bot not only "kn
 
 After the bot talked to different people and has gathered optimally hundreds of dialogs, it's time to get these records.
 ```shell
-mongoexport --collection=users --db=blex --out=bot-conversations.json
+$ mongoexport --collection=users --db=blex --out=bot-conversations.json
 ```
 
 Hard part is, to review all the dialogs, and change the answers the way the bot should answer instead. After this is done, a very own openai model can be created by fine-tuning. There is a good tutorial how it's done: https://beta.openai.com/docs/guides/fine-tuning
 
-Openai gives a name for the new model, witch has to be updated in `.env`. The content of `OPEN_AI_DESC_FILE` is no longer needed and can be removed. Also, the old records can be deleted from the database, to have a fresh set of conversations of the new model.
+Openai gives a name for the new model, witch has to be updated in `OPENAI_MODEL`. The content of `OPEN_AI_DESC_FILE` is no longer needed and can be removed. Also, the old records can be deleted from the database, to have a fresh set of conversations of the new model.
 
 The bot now should behave like expected, more or less. This fine-tuning process can be done repeatedly, to get more and more properly generated answers.
 
 ## Todo
-- Catch openai error response 
+- left/right arrow keys, moving cursor
 
 ## Sources
 - [OpenAI](https://beta.openai.com)

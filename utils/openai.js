@@ -91,7 +91,7 @@ exports.openaiGetUserGreeting = async function(summary, userId) {
             temperature: .7,
             max_tokens: 50,
         }
-    }).catch(err => errorLog(err));
+    }).catch(err => errorLog.error(err));
 
     let data = {};
     if(response.data.choices.length > 0){
@@ -114,7 +114,7 @@ exports.openaiGetConversationSummary = async function(conversation, userId) {
             temperature: .6,
             max_tokens: 200,
         }
-    }).catch(err => errorLog(err));
+    }).catch(err => errorLog.error(err));
 
     let data = {};
     if(response.data.choices.length > 0){
@@ -158,7 +158,7 @@ exports.openaiGetDialogAnswer = async function(userId, userPrompt) {
             // not so long pls
             max_tokens: 50,
         }
-    }).catch(err => errorLog(err));
+    }).catch(err => errorLog.error(err));
 
     let data = {};
     if(response.data.choices.length > 0){
