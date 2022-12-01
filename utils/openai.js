@@ -91,12 +91,11 @@ exports.openaiGetUserGreeting = async function(summary, userId) {
             temperature: .7,
             max_tokens: 50,
         }
-    });
+    }).catch(err => errorLog(err));
 
     let data = {};
     if(response.data.choices.length > 0){
         data = response.data.choices[0].text.trim();
-        //debugLog.debug(botDescription + summary + '\n\n' + conversationConfig.greetingPromptPrefix);
         debugLog.debug('Greeting for user %s | %s', userId, data);
     }
 
@@ -115,7 +114,7 @@ exports.openaiGetConversationSummary = async function(conversation, userId) {
             temperature: .6,
             max_tokens: 200,
         }
-    });
+    }).catch(err => errorLog(err));
 
     let data = {};
     if(response.data.choices.length > 0){
@@ -159,7 +158,7 @@ exports.openaiGetDialogAnswer = async function(userId, userPrompt) {
             // not so long pls
             max_tokens: 50,
         }
-    });
+    }).catch(err => errorLog(err));
 
     let data = {};
     if(response.data.choices.length > 0){
