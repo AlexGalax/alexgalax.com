@@ -152,7 +152,7 @@ The bot now should behave like expected, more or less. This fine-tuning process 
 
 ## Sources
 - [OpenAI](https://beta.openai.com)
-- [ascii bots](https://github.com/walsh9/asciibots)
+- [asciibots.js](https://github.com/walsh9/asciibots)
 
 ## Author
 [Alexander Schornberg](https://www.alexgalax.com)
