@@ -1,0 +1,6 @@
+2022-12-16T13:09:26.619Z - [38;5;167mERROR[0m - can't connect to database mongodb://localhost:27017/blex
+2022-12-16T13:09:26.661Z - [38;5;167mERROR[0m - can't get record from database. Error: %jCastError: Cast to ObjectId failed for value "lai4yphm" (type string) at path "_id" for model "User"
+2022-12-16T13:10:24.929Z - [38;5;167mERROR[0m - can't connect to database mongodb://localhost:27017/blex
+2022-12-16T13:10:54.933Z - [38;5;167mERROR[0m - can't connect to database mongodb://localhost:27017/blex
+2022-12-16T13:11:25.916Z - [38;5;167mERROR[0m - can't connect to database mongodb://localhost:27017/blex
+2022-12-16T13:11:25.916Z - [38;5;167mERROR[0m - can't get record from database. Error: %jCastError: Cast to ObjectId failed for value "lai4yphm" (type string) at path "_id" for model "User"
