@@ -1,6 +1,6 @@
 # alexgalax.com
 
-Terminal style ai bot, based on openai.
+Retro syfy terminal ai bot, based on openai.
 
 ## Requirements
 - Account & api key at https://beta.openai.com
