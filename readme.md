@@ -2,6 +2,8 @@
 
 Retro syfy terminal ai bot, based on openai.
 
+![alexgalax.com screenshot](https://repository-images.githubusercontent.com/563327679/7b3e788f-55d4-4fe2-bfdf-641024b5297c)
+
 ## Requirements
 - Account & api key at https://beta.openai.com
 - Running mongodb instance
